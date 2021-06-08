@@ -44,10 +44,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.imgURL = imgURL;
     }
 
-
     @NonNull
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull  ViewGroup parent, int viewType) {
+
         //Displays the chat_item_right layout on right hand side
         if (viewType == MSG_TYPE_LEFT){
         View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left,
@@ -89,7 +89,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             {
                 holder.txt_seen.setVisibility(View.GONE);
             }
-
 
     }
 
