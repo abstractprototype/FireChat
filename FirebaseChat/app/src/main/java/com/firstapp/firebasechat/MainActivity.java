@@ -30,7 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//New branch
+
 public class MainActivity extends AppCompatActivity {
 
     //Firebase
