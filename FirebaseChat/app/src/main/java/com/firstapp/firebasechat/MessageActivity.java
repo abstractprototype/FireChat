@@ -86,7 +86,6 @@ public class MessageActivity extends AppCompatActivity {
     //private String messageReceiverId, messageReceiverName, messageReceiverImage;
     Bitmap image;
 
-
     MessageAdapter messageAdapter;
     MediaAdapter mediaAdapter;
     private RecyclerView.LayoutManager mMediaLayoutManager;
