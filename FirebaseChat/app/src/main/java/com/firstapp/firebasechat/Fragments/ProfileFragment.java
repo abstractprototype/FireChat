@@ -10,10 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +23,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
+import com.firstapp.firebasechat.RegisterActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,9 +50,13 @@ public class ProfileFragment extends Fragment {
 
     TextView username;
     ImageView imageView;
+    TextView verifyEmail;
+    Button verifyButton;
+    String userId;
 
     DatabaseReference reference;
     FirebaseUser fuser;
+    FirebaseAuth auth;
 
     //Profile Image
     StorageReference storageReference;
@@ -65,6 +73,33 @@ public class ProfileFragment extends Fragment {
 
         imageView = view.findViewById(R.id.profile_image2);
         username = view.findViewById(R.id.usernamer);
+        verifyEmail = view.findViewById(R.id.verifyEmailText);
+        verifyButton = view.findViewById(R.id.verifyButton);
+
+        //Verify Email Button
+        fuser = auth.getInstance().getCurrentUser();
+        if(!fuser.isEmailVerified()){
+            verifyEmail.setVisibility(View.VISIBLE);
+            verifyButton.setVisibility(View.VISIBLE);
+
+            verifyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(v.getContext(), "Verification Email has been sent", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("tag", "onFailure: Email not sent " + e.getMessage());
+                        }
+                    });
+                }
+            });
+        }
+
 
         //Profile Image reference in storage
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
@@ -112,7 +147,7 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    private String getFileExtention(Uri uri){
+    private String getFileExtension(Uri uri){
 
         ContentResolver contentResolver = getContext().getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
@@ -128,7 +163,7 @@ public class ProfileFragment extends Fragment {
 
         if(imageUri != null) {
             final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
-                    + "." + getFileExtention(imageUri));
+                    + "." + getFileExtension(imageUri));
 
             uploadTask = fileReference.putFile(imageUri);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {

@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         //Tab Layout and viewpager
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         ViewPager viewPager = findViewById(R.id.view_pager);
