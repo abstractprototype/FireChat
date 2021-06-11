@@ -90,6 +90,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 holder.txt_seen.setVisibility(View.GONE);
             }
 
+
     }
 
     @Override

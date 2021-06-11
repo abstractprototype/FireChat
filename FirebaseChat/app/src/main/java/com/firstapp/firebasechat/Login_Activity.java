@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class Login_Activity extends AppCompatActivity {
 
-    EditText userETLogin, passETLogin;
+    EditText emailETLogin, passETLogin;
     Button loginBtn, registerBtn;
 
     //Firebase
@@ -45,7 +45,7 @@ public class Login_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userETLogin = findViewById(R.id.editTextUsername);
+        emailETLogin = findViewById(R.id.editTextEmail);
         passETLogin = findViewById(R.id.editTextPassword);
         loginBtn = findViewById(R.id.buttonLogin);
         registerBtn = findViewById(R.id.registerBtn);
@@ -68,7 +68,7 @@ public class Login_Activity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email_text = userETLogin.getText().toString();
+                String email_text = emailETLogin.getText().toString();
                 String pass_text = passETLogin.getText().toString();
 
                 //Checking if it is empty

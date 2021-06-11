@@ -50,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Users users = dataSnapshot.getValue(Users.class);
-//                Toast.makeText(MainActivity.this,
-//                        "User Login: "+users.getUsername(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Welcome Back! "+ users.getUsername(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -60,29 +59,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        //Tab Layout and viewpager
+        //Tab Layout and viewpager instantiate and declaring
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         ViewPager viewPager = findViewById(R.id.view_pager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
+        //Adds the fragment to main activity.
         viewPagerAdapter.addFragment(new ChatsFragment(),"Chats");
-        viewPagerAdapter.addFragment(new UserFragment(), "Users");
+        viewPagerAdapter.addFragment(new UserFragment(), "Friends");
         viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
 
         viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
     }
-    //Adding Logout Functionality
+    //Adding Logout Functionality, creates the 3 dotted menu on top right of app
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
+    //Logs user out then takes them to login page
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
@@ -129,10 +128,11 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position){
             return titles.get(position);
         }
-
-
-
     }
+
+
+
+    //Updates user if online or offline
     private void CheckStatus(String status){
 
         myRef = FirebaseDatabase.getInstance().getReference("MyUsers").child(firebaseUser.getUid());
