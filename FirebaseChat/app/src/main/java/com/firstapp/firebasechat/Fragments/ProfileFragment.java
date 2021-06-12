@@ -207,8 +207,6 @@ public class ProfileFragment extends Fragment {
         else{
             Toast.makeText(getContext(), "No Image Selected", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override
