@@ -227,6 +227,7 @@ public class MessageActivity extends AppCompatActivity {
         return mimeTypeMap.getExtensionFromMimeType((contentResolver.getType(uri)));
     }
 
+    HashMap<String, Object> messageMap = new HashMap<>();
     private void UploadMyImage(){
 
         final ProgressDialog progressDialog = new ProgressDialog(MessageActivity.this);
@@ -256,11 +257,17 @@ public class MessageActivity extends AppCompatActivity {
                         Uri downloadUri = task.getResult();
                         String mUri = downloadUri.toString();
 
-                        reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(fuser.getUid());
+                        reference = FirebaseDatabase.getInstance().getReference();
 
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put("imageURL", mUri);
-                        reference.updateChildren(map);
+                        //HashMap<String, Object> map = new HashMap<>();
+                        messageMap.put("sender", fuser.getUid());
+                        messageMap.put("receiver", userid);
+                        messageMap.put("message", "Sending Image");
+                        messageMap.put("media", mUri);
+                        messageMap.put("isseen",false);
+                        //reference.updateChildren(messageMap);
+                        reference.child("Chats").push().setValue(messageMap);
+                        //sendMessage(fuser.getUid(), userid, mUri);
 
                         progressDialog.dismiss();
                     }
@@ -459,12 +466,12 @@ public class MessageActivity extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         //Adds message info to database
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender", sender);
-        hashMap.put("receiver", receiver);
-        hashMap.put("message", message);
-        hashMap.put("isseen",false);
-        reference.child("Chats").push().setValue(hashMap);
+//        HashMap<String, Object> hashMap = new HashMap<>();
+        messageMap.put("sender", sender);
+        messageMap.put("receiver", receiver);
+        messageMap.put("message", message);
+        messageMap.put("isseen",false);
+        reference.child("Chats").push().setValue(messageMap);
 
 //        if(!mediaUriList.isEmpty()){
 //            for(String mediaUri : mediaUriList){
