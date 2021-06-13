@@ -2,6 +2,7 @@ package com.firstapp.firebasechat.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,18 @@ import com.firstapp.firebasechat.MessageActivity;
 import com.firstapp.firebasechat.Model.Chat;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import java.net.URI;
 
 //Gets all the user information from firebase
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
@@ -30,6 +36,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private Context context;
     private List<Chat> mChat;
     private String imgURL;
+    private Uri image;
+
 
     //Firebase
     FirebaseUser fuser;
@@ -42,6 +50,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.context = context;
         this.mChat = mChat;
         this.imgURL = imgURL;
+    }
+
+    public MessageAdapter(Context context, List<Chat> mChat, Uri image){
+        this.mChat = mChat;
+        this.context = context;
+        this.image = image;
     }
 
     @NonNull
@@ -63,12 +77,53 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     }
 
+    private StorageReference ImagesRef;
     @Override
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
 
+       // System.out.println("I am here");
         Chat chat = mChat.get(position);
 
-        holder.show_message.setText(chat.getMessage());
+        //System.out.println("I am here");
+
+        //if(chat.getMessage().equals(" ")){
+        //    holder.show_image.setImageURI(Uri.parse(chat.getMessage()));
+      // }else
+           //
+      //  holder.show_image.setImageURI(Uri.parse(chat.getMessage()));
+            //holder.profile_image.setImageURI(Uri.parse(chat.getMessage()));
+        //ImagesRef = FirebaseStorage.getInstance().getReference().child("images");
+
+       //final StorageReference filePath = ImagesRef.child(image.getLastPathSegment() + ".jpg");
+       // Task<Uri> image = filePath.getDownloadUrl();
+       // filePath.getFile(Uri.parse(chat.getMessage()));
+
+
+
+        try{
+           // holder.show_image.setImageURI(image);
+            Picasso.with(this.context).load(Uri.parse(chat.getMessage())).into(holder.show_image);
+        }catch(Exception e){
+
+        }
+
+        // Reference to an image file in Cloud Storage
+        StorageReference storageReference  = FirebaseStorage.getInstance().getReference().child("yourImageReferencePath");
+
+
+
+        //holder.show_image.setImageURI(image.getResult());
+        //holder.show_message.setText(chat.getMessage());
+        /*if(!chat.getMessage().equals("x")){
+             try{
+
+
+            }catch(Exception e){
+
+            }
+        }*/
+
+
         if(imgURL.equals("default")){
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
         }else{
@@ -102,6 +157,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public TextView show_message;
         public ImageView profile_image;
         public TextView txt_seen;
+        public ImageView show_image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -109,6 +165,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
             txt_seen = itemView.findViewById(R.id.txt_seen_status);
+            show_image = itemView.findViewById(R.id.image_id);
+            //show_image = itemView.findViewById(R.id.show_image);
         }
     }
 

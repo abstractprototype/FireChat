@@ -71,4 +71,5 @@ dependencies {
     //implementation 'com.androidx.support:appcompat-v7:27.1.1'
 
 
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

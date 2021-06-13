@@ -23,7 +23,7 @@
         android:layout_marginLeft="5dp"
         android:background="@drawable/background_left"
         android:padding="8dp"
-        android:text="hello"
+        android:text="hi"
         android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/profile_image" />

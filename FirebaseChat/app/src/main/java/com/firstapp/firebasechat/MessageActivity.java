@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -219,6 +220,9 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+
+
+
     private String getFileExtension(Uri uri){
 
         ContentResolver contentResolver = getApplicationContext().getContentResolver();
@@ -262,12 +266,13 @@ public class MessageActivity extends AppCompatActivity {
                         //HashMap<String, Object> map = new HashMap<>();
                         messageMap.put("sender", fuser.getUid());
                         messageMap.put("receiver", userid);
-                        messageMap.put("message", "Sending Image");
-                        messageMap.put("media", mUri);
+                        messageMap.put("message", mUri);
                         messageMap.put("isseen",false);
                         //reference.updateChildren(messageMap);
                         reference.child("Chats").push().setValue(messageMap);
                         //sendMessage(fuser.getUid(), userid, mUri);
+
+                        messageAdapter = new MessageAdapter(MessageActivity.this,mChat, imageUri);
 
                         progressDialog.dismiss();
                     }
@@ -301,6 +306,7 @@ public class MessageActivity extends AppCompatActivity {
                 Toast.makeText(MessageActivity.this, "Upload in progress...", Toast.LENGTH_SHORT).show();
             }else{
                 UploadMyImage();
+
             }
         }
     }
