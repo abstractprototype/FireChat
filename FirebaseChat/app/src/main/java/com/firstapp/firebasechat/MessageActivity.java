@@ -54,7 +54,9 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.security.Key;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,11 +226,18 @@ public class MessageActivity extends AppCompatActivity {
 
                         reference = FirebaseDatabase.getInstance().getReference();
 
+                        Calendar c = Calendar.getInstance();
+
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String formattedDate = df.format(c.getTime());
+
                         //HashMap<String, Object> map = new HashMap<>();
                         messageMap.put("sender", fuser.getUid());
                         messageMap.put("receiver", userid);
                         messageMap.put("message", mUri);
                         messageMap.put("isseen",false);
+                        messageMap.put("messageType", "image");
+                        messageMap.put("Date and Time", formattedDate);
                         //reference.updateChildren(messageMap);
                         reference.child("Chats").push().setValue(messageMap);
                         //sendMessage(fuser.getUid(), userid, mUri);
@@ -318,12 +327,18 @@ public class MessageActivity extends AppCompatActivity {
     private void sendMessage(String sender, String receiver, String message){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
+        Calendar c = Calendar.getInstance();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
         //Adds message info to database
 //        HashMap<String, Object> hashMap = new HashMap<>();
         messageMap.put("sender", sender);
         messageMap.put("receiver", receiver);
         messageMap.put("message", message);
         messageMap.put("isseen",false);
+        messageMap.put("messageType", "message");
+        messageMap.put("Date and Time", formattedDate);
         reference.child("Chats").push().setValue(messageMap);
 
 //        if(!mediaUriList.isEmpty()){

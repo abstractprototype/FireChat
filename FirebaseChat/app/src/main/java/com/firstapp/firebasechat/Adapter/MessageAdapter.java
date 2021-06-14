@@ -38,13 +38,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private String imgURL;
     private Uri image;
 
-    private String messageType;
+    private String messageType = " ";
 
     //Firebase
     FirebaseUser fuser;
 
     public static final int MSG_TYPE_LEFT = 0;
     public static final int MSG_TYPE_RIGHT = 1;
+
+    public MessageAdapter(){
+        this.messageType = "";
+    }
 
     //Constructor
     public MessageAdapter(Context context, List<Chat> mChat, String imgURL){ //For text messages
@@ -87,14 +91,35 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
        // System.out.println("I am here");
         Chat chat = mChat.get(position);
 
-//        if(messageType.equals("text")){
-//            holder.show_image.setVisibility(View.GONE);
-//            holder.show_message.setVisibility(View.VISIBLE);
-//
-//        }else if(messageType.equals("image")){
-//            holder.show_message.setVisibility(View.GONE);
-//            holder.show_image.setVisibility(View.VISIBLE);
-//        }
+
+        //System.out.println("message type: " + messageType);
+       // System.out.println("")
+      /* if(chat.getMessage().charAt(0) == 'h' && chat.getMessage().charAt(1) == 't'
+                && chat.getMessage().charAt(2) == 't' && chat.getMessage().charAt(3) == 'p'
+                && chat.getMessage().charAt(4) == 's'){
+            System.out.println("I image");
+            messageType ="image";
+            holder.show_message.setVisibility(View.GONE);
+            holder.show_image.setVisibility(View.VISIBLE);
+       }else {
+            messageType = "text";
+            System.out.println("I text");
+            holder.show_image.setVisibility(View.GONE);
+            holder.show_message.setVisibility(View.VISIBLE);
+       }*/
+
+        if(chat.getMessageType().equals("image")){
+            System.out.println("I image");
+            messageType ="image";
+            holder.show_message.setVisibility(View.GONE);
+            holder.show_image.setVisibility(View.VISIBLE);
+
+        }else {
+            messageType = "text";
+            System.out.println("I text");
+            holder.show_image.setVisibility(View.GONE);
+            holder.show_message.setVisibility(View.VISIBLE);
+        }
 
         //System.out.println("I am here");
 
@@ -115,8 +140,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
 
         try{
+            if(messageType.equals("image"))
             Picasso.with(this.context).load(Uri.parse(chat.getMessage())).into(holder.show_image);
-
+            else if(messageType.equals("text"))
+                holder.show_message.setText(chat.getMessage());
+            //Picasso.with(this.context).load(Uri.parse(chat.getMessage())).into(holder.another_image);
 //            if(messageType.equals("text")){
 //                holder.show_message.setText(chat.getMessage());
 //
@@ -177,6 +205,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public ImageView profile_image;
         public TextView txt_seen;
         public ImageView show_image;
+        public ImageView another_image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -185,6 +214,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             profile_image = itemView.findViewById(R.id.profile_image);
             txt_seen = itemView.findViewById(R.id.txt_seen_status);
             show_image = itemView.findViewById(R.id.image_id);
+            another_image = itemView.findViewById(R.id.media);
             //show_image = itemView.findViewById(R.id.show_image);
         }
     }
