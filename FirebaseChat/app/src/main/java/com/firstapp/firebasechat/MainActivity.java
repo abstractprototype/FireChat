@@ -65,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         //Adds the fragment to main activity.
-        viewPagerAdapter.addFragment(new ChatsFragment(),"Chats");
-        viewPagerAdapter.addFragment(new UserFragment(), "Friends");
-        viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
+        viewPagerAdapter.addFragment(new ChatsFragment(),"Recent Chats");
+        viewPagerAdapter.addFragment(new UserFragment(), "All Users");
+        viewPagerAdapter.addFragment(new ProfileFragment(), "My Profile");
 
         viewPager.setAdapter(viewPagerAdapter);
 

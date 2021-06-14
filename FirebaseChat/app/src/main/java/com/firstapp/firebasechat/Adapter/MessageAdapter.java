@@ -30,7 +30,7 @@ import java.util.List;
 
 import java.net.URI;
 
-//Gets all the user information from firebase
+//This adapter connects chat_item_left and chat_item_right to MessageActivity
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
     private Context context;
@@ -38,6 +38,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private String imgURL;
     private Uri image;
 
+    private String messageType;
 
     //Firebase
     FirebaseUser fuser;
@@ -46,16 +47,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public static final int MSG_TYPE_RIGHT = 1;
 
     //Constructor
-    public MessageAdapter(Context context, List<Chat> mChat, String imgURL){
+    public MessageAdapter(Context context, List<Chat> mChat, String imgURL){ //For text messages
         this.context = context;
         this.mChat = mChat;
         this.imgURL = imgURL;
+        this.messageType = "text";
     }
 
-    public MessageAdapter(Context context, List<Chat> mChat, Uri image){
+    public MessageAdapter(Context context, List<Chat> mChat, Uri image){ //Sending Image only
         this.mChat = mChat;
         this.context = context;
         this.image = image;
+        this.messageType = "image";
     }
 
     @NonNull
@@ -84,6 +87,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
        // System.out.println("I am here");
         Chat chat = mChat.get(position);
 
+//        if(messageType.equals("text")){
+//            holder.show_image.setVisibility(View.GONE);
+//            holder.show_message.setVisibility(View.VISIBLE);
+//
+//        }else if(messageType.equals("image")){
+//            holder.show_message.setVisibility(View.GONE);
+//            holder.show_image.setVisibility(View.VISIBLE);
+//        }
+
         //System.out.println("I am here");
 
         //if(chat.getMessage().equals(" ")){
@@ -100,17 +112,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
 
 
+
+
         try{
-           // holder.show_image.setImageURI(image);
             Picasso.with(this.context).load(Uri.parse(chat.getMessage())).into(holder.show_image);
+
+//            if(messageType.equals("text")){
+//                holder.show_message.setText(chat.getMessage());
+//
+//            }else if(messageType.equals("image")){
+//                Picasso.with(this.context).load(Uri.parse(chat.getMessage())).into(holder.show_image);
+//            }
+
         }catch(Exception e){
 
         }
 
         // Reference to an image file in Cloud Storage
         StorageReference storageReference  = FirebaseStorage.getInstance().getReference().child("yourImageReferencePath");
-
-
 
         //holder.show_image.setImageURI(image.getResult());
         //holder.show_message.setText(chat.getMessage());

@@ -7,6 +7,8 @@ public class Users {
     private String imageURL;
     private String status;
 
+    private Boolean selected = false;
+
     //Constructors;
     public Users(){
 
@@ -50,5 +52,13 @@ public class Users {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.firstapp.firebasechat.Adapter.UserAdapter;
 import com.firstapp.firebasechat.Model.Chatlist;
@@ -24,18 +25,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 //This class is for displaying recent chats with users
+//I want this class ChatsFragment to turn into a list of group chats
 public class ChatsFragment extends Fragment {
 
     private UserAdapter userAdapter;
-    private List<Users> mUsers;
+    private List<Users> mUsers; //List of total existing users on Firebase
+    private List<Chatlist> usersList; //List of recent chats with users
 
     FirebaseUser fuser;
     DatabaseReference reference;
-
-    private List<Chatlist> usersList;
 
     RecyclerView recyclerView;
 

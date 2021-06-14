@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +23,7 @@ import java.util.List;
 
 
 //Gets all the user information from firebase
+//This adapter connects user_item.xml to UserFragment and ChatsFragment
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private Context context;
@@ -41,6 +44,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         View view = LayoutInflater.from(context).inflate(R.layout.user_item,
                 parent,
                  false);
+//        View view2 = LayoutInflater.from(context).inflate(R.layout.user_itemnocheckbox,
+//                parent,
+//                false);
         return new UserAdapter.ViewHolder(view);
     }
 
@@ -48,6 +54,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull UserAdapter.ViewHolder holder, int position) {
         Users users = mUsers.get(position);
         holder.username.setText(users.getUsername());
+
+        holder.mAdd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mUsers.get(holder.getAdapterPosition()).setSelected(isChecked);
+            }
+        });
 
         if(users.getImageURL().equals("default")){
             holder.imageView.setImageResource(R.mipmap.ic_launcher);
@@ -95,6 +108,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView username;
         public ImageView imageView;
+        CheckBox mAdd;
         public ImageView imageViewON;
         public ImageView imageViewOFF;
 
@@ -103,6 +117,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
             username = itemView.findViewById(R.id.usernameItem);
             imageView = itemView.findViewById(R.id.imageView);
+            mAdd = itemView.findViewById(R.id.addUser);
             imageViewON = itemView.findViewById(R.id.statusimageON);
             imageViewOFF = itemView.findViewById(R.id.statusimageOFF);
 
