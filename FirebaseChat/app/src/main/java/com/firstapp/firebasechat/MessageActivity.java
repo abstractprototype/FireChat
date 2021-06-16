@@ -273,11 +273,68 @@ public class MessageActivity extends AppCompatActivity {
     private void sendMessage(String sender, String receiver, String message){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
+<<<<<<< Updated upstream
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
         hashMap.put("isseen",false);
+=======
+        Calendar c = Calendar.getInstance();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
+        //Adds message info to database
+//        HashMap<String, Object> hashMap = new HashMap<>();
+        messageMap.put("sender", sender);
+        messageMap.put("receiver", receiver);
+        messageMap.put("message", message);
+        messageMap.put("isseen",false);
+        messageMap.put("messageType", "message");
+        messageMap.put("Date and Time", formattedDate);
+        reference.child("Chats").push().setValue(messageMap);
+
+
+        //Allows user to select multiple media pictures to send at once
+        //Puts the media files in an arraylist
+//        if(!mediaUriList.isEmpty()){
+//            for(String mediaUri : mediaUriList){
+//                String mediaId = reference.child("media").push().getKey();
+//                mediaIdList.add(mediaId);
+//                final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("images");
+//
+//                UploadTask uploadTask = filePath.putFile(Uri.parse(mediaUri));
+//
+//                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                hashMap.put("/media/" + mediaIdList.get(totalMediaUploaded) + "/", uri.toString());
+//
+//                                totalMediaUploaded++;
+//                                if(totalMediaUploaded == mediaUriList.size()){
+//                                    updateDatabaseWithNewMessage(reference, hashMap);
+//                                }
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//        }else{
+//            if(!msg_editText.getText().toString().isEmpty()){
+//                updateDatabaseWithNewMessage(reference, hashMap);
+//            }
+//        }
+// private void updateDatabaseWithNewMessage(DatabaseReference databaseReference, HashMap hashMap ){
+//        databaseReference.updateChildren(hashMap);
+//        mediaUriList.clear();
+//        mediaIdList.clear();
+//        mMediaAdapter.notifyDataSetChanged();
+//
+//    }
+>>>>>>> Stashed changes
 
         reference.child("Chats").push().setValue(hashMap);
 
@@ -304,6 +361,7 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+<<<<<<< Updated upstream
     private void sendImage(String sender, String receiver, String message){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
@@ -336,6 +394,8 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
+=======
+>>>>>>> Stashed changes
     private void readMessages(String myid, String userid, String imageURL){
         mChat = new ArrayList<>();
 

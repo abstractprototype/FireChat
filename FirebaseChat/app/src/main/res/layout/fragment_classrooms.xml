@@ -5,12 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.ChatsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-<androidx.recyclerview.widget.RecyclerView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/recyclerview2">
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/classroom_recycler">
 
-</androidx.recyclerview.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>

@@ -17,6 +17,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 //Populates imageview with the image uri
+//This class is not used yet 6/15/21
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHolder>{
 
     ArrayList<String> mediaList;

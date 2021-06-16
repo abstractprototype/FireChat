@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firstapp.firebasechat.Fragments.ChatsFragment;
+import com.firstapp.firebasechat.Fragments.ClassRoomsFragment;
 import com.firstapp.firebasechat.Fragments.ProfileFragment;
 import com.firstapp.firebasechat.Fragments.UserFragment;
 import com.firstapp.firebasechat.Model.Users;
@@ -68,9 +69,17 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
+<<<<<<< Updated upstream
         viewPagerAdapter.addFragment(new ChatsFragment(),"Chats");
         viewPagerAdapter.addFragment(new UserFragment(), "Users");
         viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
+=======
+        //Adds the fragment to main activity. Displayed from Left to Right
+        viewPagerAdapter.addFragment(new ClassRoomsFragment(), "My Chat Rooms");
+        //viewPagerAdapter.addFragment(new ProfileFragment(), "My Profile");
+        viewPagerAdapter.addFragment(new UserFragment(), "All Users");
+        viewPagerAdapter.addFragment(new ChatsFragment(),"Recent Chats");
+>>>>>>> Stashed changes
 
         viewPager.setAdapter(viewPagerAdapter);
 
