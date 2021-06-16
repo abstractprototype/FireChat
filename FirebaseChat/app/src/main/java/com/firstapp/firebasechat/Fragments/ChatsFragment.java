@@ -27,15 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 //This class is for displaying recent chats with users
+//I want this class ChatsFragment to turn into a list of group chats
 public class ChatsFragment extends Fragment {
 
     private UserAdapter userAdapter;
-    private List<Users> mUsers;
+    private List<Users> mUsers; //List of total existing users on Firebase
+    private List<Chatlist> usersList; //List of recent chats with users
 
     FirebaseUser fuser;
     DatabaseReference reference;
-
-    private List<Chatlist> usersList;
 
     RecyclerView recyclerView;
 

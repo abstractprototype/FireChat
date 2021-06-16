@@ -52,7 +52,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
 
         public MediaViewHolder(@NonNull View itemView) {
             super(itemView);
-            mMedia = itemView.findViewById(R.id.media);
+            mMedia = itemView.findViewById(R.id.media); //Locates the image view in item_media.xml
         }
     }
 

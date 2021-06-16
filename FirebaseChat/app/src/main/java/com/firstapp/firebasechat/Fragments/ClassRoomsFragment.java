@@ -29,7 +29,7 @@ import java.util.List;
 //I want this class ChatsFragment to turn into a list of group chats
 public class ClassRoomsFragment extends Fragment {
 
-    private UserAdapter userAdapter;
+    //private UserAdapter userAdapter;
     //private List<Users> mUsers; //List of total existing users on Firebase
 
     private List<Classrooms> classroomsList; //List of recent classrooms with users
@@ -95,10 +95,10 @@ public class ClassRoomsFragment extends Fragment {
 
     private void classroomsList() {
 
-//        //Getting all recent Chat Rooms :
-//        mUsers = new ArrayList<>();
-//        reference = FirebaseDatabase.getInstance().getReference("MyUsers");
-//        reference.addValueEventListener(new ValueEventListener() {
+        //Getting all recent Chat Rooms :
+        classroomsList = new ArrayList<>();
+        roomReference = FirebaseDatabase.getInstance().getReference("ChatRooms");
+        roomReference.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot snapshot) {
 //                mUsers.clear();
@@ -116,14 +116,12 @@ public class ClassRoomsFragment extends Fragment {
 //                userAdapter = new UserAdapter(getContext(), mUsers, true);
 //                recyclerView.setAdapter(userAdapter);
 //            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
 
     }
 

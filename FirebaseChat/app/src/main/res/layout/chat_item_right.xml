@@ -18,11 +18,19 @@
             android:id="@+id/profile_image"
             android:visibility="gone"/>
 
+        <ImageView
+            android:id="@+id/image_id"
+            android:layout_width="@android:dimen/thumbnail_width"
+            android:layout_height="@android:dimen/thumbnail_height"
+            android:layout_below="@+id/profile_image"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="100dp"
+            android:scaleType="centerCrop" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_right"
-            android:text="hello"
             android:layout_alignParentEnd="true"
             android:id="@+id/show_message"
             android:textSize="18sp"
@@ -31,6 +39,7 @@
             android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
+
 
     <TextView
         android:id="@+id/txt_seen_status"
@@ -43,6 +52,8 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="6dp"
         android:text="TextView" />
+
+
 
 </RelativeLayout>
 

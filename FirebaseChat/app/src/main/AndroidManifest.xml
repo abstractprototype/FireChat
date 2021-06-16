@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FirebaseChat">
         <activity android:name=".MessageActivity"></activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".Login_Activity">
             <intent-filter>

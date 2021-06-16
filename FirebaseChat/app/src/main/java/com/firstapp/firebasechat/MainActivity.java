@@ -2,10 +2,15 @@ package com.firstapp.firebasechat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -19,6 +24,7 @@ import com.firstapp.firebasechat.Fragments.ClassRoomsFragment;
 import com.firstapp.firebasechat.Fragments.ProfileFragment;
 import com.firstapp.firebasechat.Fragments.UserFragment;
 import com.firstapp.firebasechat.Model.Users;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,11 +38,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 //New branch
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     //Firebase
     FirebaseUser firebaseUser;
     DatabaseReference myRef;
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle toggle;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Users users = dataSnapshot.getValue(Users.class);
-//                Toast.makeText(MainActivity.this,
-//                        "User Login: "+users.getUsername(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Welcome Back! "+ users.getUsername(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -61,47 +69,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        drawerLayout = findViewById(R.id.drawer);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
+        toggle = new ActionBarDrawerToggle(this, drawerLayout,toolbar,R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.setDrawerIndicatorEnabled(true);
+        toggle.syncState();
 
-        //Tab Layout and viewpager
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        //Tab Layout and viewpager instantiate and declaring
+        TabLayout tabLayout = findViewById(R.id.tablayout);
+        ViewPager viewPager = findViewById(R.id.viewpager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-<<<<<<< Updated upstream
-        viewPagerAdapter.addFragment(new ChatsFragment(),"Chats");
-        viewPagerAdapter.addFragment(new UserFragment(), "Users");
-        viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
-=======
         //Adds the fragment to main activity. Displayed from Left to Right
         viewPagerAdapter.addFragment(new ClassRoomsFragment(), "My Chat Rooms");
         //viewPagerAdapter.addFragment(new ProfileFragment(), "My Profile");
         viewPagerAdapter.addFragment(new UserFragment(), "All Users");
         viewPagerAdapter.addFragment(new ChatsFragment(),"Recent Chats");
->>>>>>> Stashed changes
 
         viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
     }
-    //Adding Logout Functionality
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
-
-            case R.id.logout:
-                FirebaseAuth.getInstance().signOut();
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.logout){
+            FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(MainActivity.this, Login_Activity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                return true;
         }
+        if(item.getItemId() == R.id.profile){
+            
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
         return false;
     }
 
@@ -138,10 +144,11 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position){
             return titles.get(position);
         }
-
-
-
     }
+
+
+
+    //Updates user if online or offline
     private void CheckStatus(String status){
 
         myRef = FirebaseDatabase.getInstance().getReference("MyUsers").child(firebaseUser.getUid());

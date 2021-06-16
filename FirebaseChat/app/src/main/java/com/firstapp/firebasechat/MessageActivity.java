@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -53,9 +54,12 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.security.Key;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.security.AccessController.getContext;
 
@@ -64,8 +68,6 @@ public class MessageActivity extends AppCompatActivity {
     TextView username;
     ImageView imageView;
 
-    RecyclerView recyclerViewy, mMedia;
-    RecyclerView.Adapter mMediaAdapter;
     EditText msg_editText;
     ImageButton sendBtn;
     ImageButton imageBtn;
@@ -74,25 +76,30 @@ public class MessageActivity extends AppCompatActivity {
     DatabaseReference reference;
     Intent intent;
 
-//    //Upload Image
-//    StorageReference storageReference;
-      private static final int IMAGE_REQUEST = 1;
-      private Uri fileUri;
-//    private StorageTask uploadTask;
-//    private String checker= "", myUrl="";1
+    //Loading Bar
+    private ProgressDialog loadingBar;
 
-//    private String mChatUser;
-//    private String mCurrentUserId;
-    //private String messageReceiverId, messageReceiverName, messageReceiverImage;
+    //Upload Image
+    StorageReference storageReference;
+    private static final int IMAGE_REQUEST = 1;
+    private Uri imageUri;
+    private StorageTask uploadTask;
+    private String checker= "", myUrl="";
+
+    private String mChatUser;
+    private String mCurrentUserId;
+    private String messageSenderId, messageReceiverId, messageReceiverName, messageReceiverImage;
     Bitmap image;
 
     MessageAdapter messageAdapter;
     MediaAdapter mediaAdapter;
-    private RecyclerView.LayoutManager mMediaLayoutManager;
     List<Chat> mChat;
     ArrayList<String> mediaUriList; //For sending images, adds uri to this list
 
     RecyclerView recyclerView;
+    RecyclerView recyclerViewy, mMedia;
+    private RecyclerView.LayoutManager mMediaLayoutManager;
+    RecyclerView.Adapter mMediaAdapter;
     String userid;
 
     ValueEventListener seenListener;
@@ -124,6 +131,13 @@ public class MessageActivity extends AppCompatActivity {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid);
 
+        //Initialize Loading Bar
+        loadingBar = new ProgressDialog(this);
+
+//        initializeMedia();
+
+        //Profile Image reference in storage
+        storageReference = FirebaseStorage.getInstance().getReference("images");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -147,6 +161,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        //Sending message button listener
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,44 +175,10 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-//        imageBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                CharSequence options[] = new CharSequence[]
-//                {
-//                    "Images",
-//                    "PDF Files",
-//                    "MS Word Files"
-//                };
-//                AlertDialog.Builder builder = new AlertDialog.Builder(MessageActivity.this);
-//                builder.setTitle("Choose a File");
-//
-//                builder.setItems(options, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int i) {
-//                        if(i==0){
-//                            checker = "image";
-//
-//                            Intent intent = new Intent();
-//                            intent.setAction(Intent.ACTION_GET_CONTENT);
-//                            intent.setType("image/*");
-//                            startActivityForResult(intent.createChooser(intent, "Select Image"), 438);
-//                        }
-//                        if(i==1){
-//                            checker = "pdf";
-//                        }
-//                        if(i==2){
-//                            checker = "docx";
-//                        }
-//                    }
-//                });
-//            }
-//        });
-
         imageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openGallery();
+                SelectImage();
             }
         });
 
@@ -205,40 +186,110 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    //Opens user's gallery
-    private void openGallery(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"),IMAGE_REQUEST);
+    private String getFileExtension(Uri uri){
+
+        ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+
+        return mimeTypeMap.getExtensionFromMimeType((contentResolver.getType(uri)));
     }
 
+    HashMap<String, Object> messageMap = new HashMap<>();
+    private void UploadMyImage(){
 
-    //For sending image
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IMAGE_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data != null) {
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
-                        sendImage(fuser.getUid(), userid, bitmap.toString());
+        final ProgressDialog progressDialog = new ProgressDialog(MessageActivity.this);
+        progressDialog.setMessage("Uploading");
+        progressDialog.show();
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+        if(imageUri != null) {
+            final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
+                    + "." + getFileExtension(imageUri));
+
+            uploadTask = fileReference.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+
+                    if(!task.isSuccessful()){
+                        throw task.getException();
+                    }
+
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+                    if(task.isSuccessful()){
+                        Uri downloadUri = task.getResult();
+                        String mUri = downloadUri.toString();
+
+                        reference = FirebaseDatabase.getInstance().getReference();
+
+                        Calendar c = Calendar.getInstance();
+
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String formattedDate = df.format(c.getTime());
+
+                        //HashMap<String, Object> map = new HashMap<>();
+                        messageMap.put("sender", fuser.getUid());
+                        messageMap.put("receiver", userid);
+                        messageMap.put("message", mUri);
+                        messageMap.put("isseen",false);
+                        messageMap.put("messageType", "image");
+                        messageMap.put("Date and Time", formattedDate);
+                        //reference.updateChildren(messageMap);
+                        reference.child("Chats").push().setValue(messageMap);
+                        //sendMessage(fuser.getUid(), userid, mUri);
+
+                        messageAdapter = new MessageAdapter(MessageActivity.this,mChat, imageUri);
+
+                        progressDialog.dismiss();
+                    }
+                    else{
+                        Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
-            } else if (resultCode == Activity.RESULT_CANCELED)  {
-                Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MessageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                }
+            });
+        }
+        else{
+            Toast.makeText(MessageActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null){
+
+            imageUri = data.getData();
+
+            if(uploadTask != null && uploadTask.isInProgress()){
+                Toast.makeText(MessageActivity.this, "Upload in progress...", Toast.LENGTH_SHORT).show();
+            }else{
+                UploadMyImage();
+
             }
         }
     }
 
-    private String getFileExtension(Uri uri){
-        ContentResolver contentResolver = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    //Opens user's gallery
+    private void SelectImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture(s)"), IMAGE_REQUEST);
     }
+
 
 
     //Changes message to seen when receiver sees the sender"s message
@@ -270,16 +321,12 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
+    int totalMediaUploaded = 0;
+    ArrayList<String> mediaIdList = new ArrayList<>();
+
     private void sendMessage(String sender, String receiver, String message){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
-<<<<<<< Updated upstream
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender", sender);
-        hashMap.put("receiver", receiver);
-        hashMap.put("message", message);
-        hashMap.put("isseen",false);
-=======
         Calendar c = Calendar.getInstance();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -334,11 +381,9 @@ public class MessageActivity extends AppCompatActivity {
 //        mMediaAdapter.notifyDataSetChanged();
 //
 //    }
->>>>>>> Stashed changes
 
-        reference.child("Chats").push().setValue(hashMap);
 
-        //Adding User to chat fragment: Latest chats with contacts
+        //After chatting with user, adds User to chat fragment: Recent chats with contacts
         final DatabaseReference chatRef = FirebaseDatabase.getInstance()
                 .getReference("ChatList")
                 .child(fuser.getUid())
@@ -358,44 +403,8 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
-<<<<<<< Updated upstream
-    private void sendImage(String sender, String receiver, String message){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender", sender);
-        hashMap.put("receiver", receiver);
-        hashMap.put("message", message);
-        hashMap.put("isseen",false);
-
-        reference.child("Chats").push().setValue(hashMap);
-
-        //Adding User to chat fragment: Latest chats with contacts
-        final DatabaseReference chatRef = FirebaseDatabase.getInstance()
-                .getReference("ChatList")
-                .child(fuser.getUid())
-                .child(userid);
-
-        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.exists()){
-                    chatRef.child("id").setValue(userid);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-=======
->>>>>>> Stashed changes
     private void readMessages(String myid, String userid, String imageURL){
         mChat = new ArrayList<>();
 
@@ -424,6 +433,8 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     //Checks online or offline status of a user
     private void CheckStatus(String status){

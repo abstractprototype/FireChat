@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.firstapp.firebasechat.Adapter.UserAdapter;
 import com.firstapp.firebasechat.Model.Users;
@@ -21,21 +22,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
 
 public class UserFragment extends Fragment {
 
         private RecyclerView recyclerView;
         private UserAdapter userAdapter;
-        private List<Users> mUsers;
+        private List<Users> mUsers; //List of total existing users in Firebase
 
     public UserFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,12 +50,19 @@ public class UserFragment extends Fragment {
         mUsers = new ArrayList<>();
 
         ReadUsers();
+
+        Button mCreate = view.findViewById(R.id.createChatRoom);
+        mCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createChatRoom();
+            }
+        });
+
         return view;
 
     }
 
-<<<<<<< Updated upstream
-=======
     private void createChatRoom() {
 
         String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().getKey(); //Generates the chatroom ID as a key, then assigns the chatroom ID to each participating user
@@ -85,7 +93,6 @@ public class UserFragment extends Fragment {
         }
     }
 
->>>>>>> Stashed changes
     private void ReadUsers(){
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("MyUsers");

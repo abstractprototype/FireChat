@@ -67,8 +67,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         imageView = view.findViewById(R.id.profile_image2);
@@ -207,8 +207,6 @@ public class ProfileFragment extends Fragment {
         else{
             Toast.makeText(getContext(), "No Image Selected", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override
