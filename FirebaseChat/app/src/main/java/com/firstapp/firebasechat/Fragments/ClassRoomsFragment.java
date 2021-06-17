@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firstapp.firebasechat.Adapter.ClassRoomAdapter;
 import com.firstapp.firebasechat.Adapter.UserAdapter;
 import com.firstapp.firebasechat.Model.Classrooms;
 import com.firstapp.firebasechat.R;
@@ -29,7 +30,7 @@ import java.util.List;
 //I want this class ChatsFragment to turn into a list of group chats
 public class ClassRoomsFragment extends Fragment {
 
-    //private UserAdapter userAdapter;
+    private ClassRoomAdapter classRoomAdapter;
     //private List<Users> mUsers; //List of total existing users on Firebase
 
     private List<Classrooms> classroomsList; //List of recent classrooms with users
@@ -59,6 +60,8 @@ public class ClassRoomsFragment extends Fragment {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
         classroomsList = new ArrayList<>();//Initialize classrooms array list
+        roomReference = FirebaseDatabase.getInstance().getReference("ChatRooms")//Gets the users inside the Chatroom folder
+                .child(fuser.getUid());
 
         String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();
         System.out.println("finding chat room key");
@@ -97,25 +100,26 @@ public class ClassRoomsFragment extends Fragment {
 
         //Getting all recent Chat Rooms :
         classroomsList = new ArrayList<>();
-        roomReference = FirebaseDatabase.getInstance().getReference("ChatRooms");
+        roomReference = FirebaseDatabase.getInstance().getReference("MyUsers");
         roomReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                mUsers.clear();
-//
-//                for(DataSnapshot snapshot1 : snapshot.getChildren()){
-//
-//                    Users user = snapshot1.getValue(Users.class);
-//                    for(Chatlist chatlist : usersList){
-//                        if(user.getId().equals(chatlist.getId())){
-//                            mUsers.add(user);
-//                        }
-//                    }
-//                }
-//
-//                userAdapter = new UserAdapter(getContext(), mUsers, true);
-//                recyclerView.setAdapter(userAdapter);
-//            }
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                classroomsList.clear();
+
+                for(DataSnapshot snapshot1 : snapshot.getChildren()){
+
+                    Classrooms cRooms = snapshot1.getValue(Classrooms.class);
+                    for(Classrooms classList : classroomsList){
+                        if(cRooms.getId().equals(classList.getId())){
+                            classroomsList.add(cRooms);
+                        }
+//                        classroomsList.add(cRooms);
+                    }
+                }
+
+                classRoomAdapter = new ClassRoomAdapter(getContext(), classroomsList, true);
+                recyclerView.setAdapter(classRoomAdapter);
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

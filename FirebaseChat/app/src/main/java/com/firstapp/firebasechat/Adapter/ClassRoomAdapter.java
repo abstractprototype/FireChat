@@ -18,15 +18,82 @@ import com.firstapp.firebasechat.MessageActivity;
 import com.firstapp.firebasechat.Model.Classrooms;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.List;
 
 
 //Gets all the user information from firebase
-//This adapter connects chatroom.xml(not yet implemented) to ClassRoomsFragment
-public class ClassRoomAdapter {
+//This adapter connects classroom_item.xml to ClassRoomFragment
+public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.ViewHolder> {
 
+    private Context context;
+    private List<Classrooms> mRooms;
+    private boolean isChat;
+
+    //Constructor
+    public ClassRoomAdapter(Context context, List<Classrooms> mRooms, boolean isChat){
+        this.context = context;
+        this.mRooms = mRooms;
+        this.isChat = isChat;
+    }
+
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull  ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.classroom_item,
+                parent,
+                false);
+
+        return new ClassRoomAdapter.ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ClassRoomAdapter.ViewHolder holder, int position) {
+        Classrooms classrooms = mRooms.get(position);
+        holder.classroomName.setText(classrooms.getId());
+
+        //For profile picture of classroom
+        if(classrooms.getImageURL().equals("default")){
+            holder.classroomImage.setImageResource(R.mipmap.ic_launcher);
+        }else{
+            // Adding Glide Library
+            Glide.with(context)
+                    .load(classrooms.getImageURL())
+                    .into(holder.classroomImage);
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, MessageActivity.class);
+                i.putExtra("classroomid", classrooms.getId());
+                context.startActivity(i);
+
+
+            }
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return mRooms.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        public ImageView classroomImage;
+        public TextView classroomName;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            classroomImage = itemView.findViewById(R.id.classroomImage);
+            classroomName = itemView.findViewById(R.id.classroomName);
+
+        }
+    }
 
 
 }
