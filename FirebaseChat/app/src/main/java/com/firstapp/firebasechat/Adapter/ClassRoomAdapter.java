@@ -19,6 +19,7 @@ import com.firstapp.firebasechat.Model.Classrooms;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,11 +28,11 @@ import java.util.List;
 public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.ViewHolder> {
 
     private Context context;
-    private List<Classrooms> mRooms;
+    private List<String> mRooms;
     private boolean isChat;
 
     //Constructor
-    public ClassRoomAdapter(Context context, List<Classrooms> mRooms, boolean isChat){
+    public ClassRoomAdapter(Context context, List<String> mRooms, boolean isChat){
         this.context = context;
         this.mRooms = mRooms;
         this.isChat = isChat;
@@ -50,25 +51,27 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ClassRoomAdapter.ViewHolder holder, int position) {
-        Classrooms classrooms = mRooms.get(position);
-        holder.classroomName.setText(classrooms.getId());
+
+        holder.classroomName.setText(mRooms.get(position));
+
+
 
         //For profile picture of classroom
-        if(classrooms.getImageURL().equals("default")){
+       /* if(classrooms.getImageURL().equals("default")){
             holder.classroomImage.setImageResource(R.mipmap.ic_launcher);
         }else{
             // Adding Glide Library
             Glide.with(context)
                     .load(classrooms.getImageURL())
                     .into(holder.classroomImage);
-        }
+        }*/
 
         holder.itemView.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context, MessageActivity.class);
-                i.putExtra("classroomid", classrooms.getId());
+               // i.putExtra("classroomid", classrooms.getId());
                 context.startActivity(i);
 
 

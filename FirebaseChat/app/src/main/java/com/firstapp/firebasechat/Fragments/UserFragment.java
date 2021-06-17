@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.firstapp.firebasechat.Adapter.UserAdapter;
+import com.firstapp.firebasechat.Model.Chat;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +34,7 @@ public class UserFragment extends Fragment {
         private RecyclerView recyclerView;
         private UserAdapter userAdapter;
         private List<Users> mUsers; //List of total existing users in Firebase
+        private List<String> chatRoomID;
 
     public UserFragment() {
         // Required empty public constructor
@@ -48,6 +50,7 @@ public class UserFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mUsers = new ArrayList<>();
+        //chatRoomID = new ArrayList<>();
 
         ReadUsers();
 
@@ -56,6 +59,7 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 createChatRoom();
+                //new ClassRoomsFragment();
             }
         });
 
@@ -67,14 +71,17 @@ public class UserFragment extends Fragment {
 
         String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().getKey(); //Generates the chatroom ID as a key, then assigns the chatroom ID to each participating user
         DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("MyUsers");//Gives the chatroom ID to the selected user inside chatroom
+        //System.out.println("key: " + key);
         DatabaseReference chatInfoDb = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(key);//Creates a folder "Chat Rooms", generates Chat Room ID, then gives this chat room ID to the selected users.
 
         HashMap newChatRoom = new HashMap<>();
-        newChatRoom.put("id", key);
         newChatRoom.put("users/" + FirebaseAuth.getInstance().getUid(), true);//Puts all user IDs inside chatroom folder
         //reference.child("ChatRooms").push().setValue(newChatRoom);
 
         Boolean validChat = false;
+
+
+        System.out.println("I am in chat room");
 
         //Loops through selected users then puts them inside a chat room
         for(Users oneUser: mUsers){
@@ -92,6 +99,7 @@ public class UserFragment extends Fragment {
             userDb.child(FirebaseAuth.getInstance().getUid()).child("ChatRooms").child(key).setValue(true);//Chatroom owner
         }
     }
+
 
     private void ReadUsers(){
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

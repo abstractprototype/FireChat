@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,8 @@ public class ClassRoomsFragment extends Fragment {
     //private List<Users> mUsers; //List of total existing users on Firebase
 
     private List<Classrooms> classroomsList; //List of recent classrooms with users
+    private List<String> classrooms;
+    private List<String> myUsers;
 
     FirebaseUser fuser;
     DatabaseReference roomReference;
@@ -42,6 +45,9 @@ public class ClassRoomsFragment extends Fragment {
 
     public ClassRoomsFragment() {
         // Required empty public constructor
+        classrooms = new ArrayList<>();
+        myUsers = new ArrayList<>();
+
     }
 
 
@@ -65,22 +71,25 @@ public class ClassRoomsFragment extends Fragment {
 
         String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();
         System.out.println("finding chat room key");
-        roomReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(key);
+        roomReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms");
         System.out.println("saving chat room key");
-
+        System.out.println("roomList ");
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
 
                 classroomsList.clear();
 
                 //Gets all the data from Firebase for all Class Rooms:
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
+                    //classrooms.add(snapshot1.getValue().toString());
+                    //Classrooms roomList = snapshot1.getValue(Classrooms.class);
 
-                    Classrooms roomList = snapshot1.getValue(Classrooms.class);
-                    classroomsList.add(roomList);//Adds to the view all the classrooms to our array list called classroomsList
-                    System.out.println("Getting snapshot of existing chatrooms");
-                    System.out.println("Adding existing chatrooms to our array list");
+                    //System.out.println("roomList " + roomList.getId());
+                    //classroomsList.add(roomList);//Adds to the view all the classrooms to our array list called classroomsList
+                   // System.out.println("Getting snapshot of existing chatrooms");
+                    //System.out.println("Adding existing chatrooms to our array list");
                 }
 
                 classroomsList();
@@ -97,27 +106,38 @@ public class ClassRoomsFragment extends Fragment {
     }
 
     private void classroomsList() {
-
+        //System.out.println("I am here classroom " );
         //Getting all recent Chat Rooms :
         classroomsList = new ArrayList<>();
-        roomReference = FirebaseDatabase.getInstance().getReference("MyUsers");
+        roomReference = FirebaseDatabase.getInstance().getReference("MyUsers").child(fuser.getUid())
+                .child("ChatRooms");
+
+
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                classroomsList.clear();
-
+                //classroomsList.clear();
+                classrooms.clear();
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
 
-                    Classrooms cRooms = snapshot1.getValue(Classrooms.class);
+
+                    System.out.println("room reference");
+                    classrooms.add(snapshot1.getKey().toString());
+
+                    /*Classrooms cRooms = snapshot1.getValue(Classrooms.class);
                     for(Classrooms classList : classroomsList){
-                        if(cRooms.getId().equals(classList.getId())){
+                        //if(cRooms.getId().equals(classList.getId())){
+                        //    System.out.println("I am here " + cRooms.getId());
                             classroomsList.add(cRooms);
-                        }
+                        System.out.println("I am here " + cRooms.getId());
+                     //   }
 //                        classroomsList.add(cRooms);
-                    }
+                    }*/
+
+                    myUsers.add(snapshot1.getValue().toString());
                 }
 
-                classRoomAdapter = new ClassRoomAdapter(getContext(), classroomsList, true);
+                classRoomAdapter = new ClassRoomAdapter(getContext(), classrooms, true);
                 recyclerView.setAdapter(classRoomAdapter);
             }
 

@@ -9,7 +9,7 @@ public class Classrooms {
 
     }
 
-    public Classrooms(String id, String chatmageURL)
+    public Classrooms(String user)
     {
         this.id = id;
         this.chatImageURL = chatImageURL;
