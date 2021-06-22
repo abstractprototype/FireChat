@@ -6,38 +6,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
-import com.firstapp.firebasechat.Adapter.MediaAdapter;
 import com.firstapp.firebasechat.Adapter.MessageAdapter;
 import com.firstapp.firebasechat.Model.Chat;
+import com.firstapp.firebasechat.Model.Classrooms;
 import com.firstapp.firebasechat.Model.Users;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,35 +35,29 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.IOException;
-import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static java.security.AccessController.getContext;
 
 //This class connects to activity_message.xml only used for direct messaging
-public class MessageActivity extends AppCompatActivity {
+public class ClassRoomMessageActivity extends AppCompatActivity {
 
-    TextView username;
-    ImageView imageView;
+    TextView classRoomTitle;
+    ImageView classRoomPic;
 
-    EditText msg_editText;
-    ImageButton sendBtn;
-    ImageButton imageBtn;
+    EditText classRoomEditText;
+    ImageButton classRoomSendBtn;
+    ImageButton classRoomImageBtn;
 
     FirebaseUser fuser;
-    DatabaseReference reference;
+    DatabaseReference classRoomReference;
     Intent intent;
 
     //Loading Bar
@@ -85,42 +68,30 @@ public class MessageActivity extends AppCompatActivity {
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
     private StorageTask uploadTask;
-    private String checker= "", myUrl="";
-
-    private String mChatUser;
-    private String mCurrentUserId;
-    private String messageSenderId, messageReceiverId, messageReceiverName, messageReceiverImage;
-    Bitmap image;
 
     MessageAdapter messageAdapter;
-    MediaAdapter mediaAdapter;
     List<Chat> mChat;
-    ArrayList<String> mediaUriList; //For sending images, adds uri to this list
 
     RecyclerView recyclerView;
-    RecyclerView recyclerViewy, mMedia;
-    private RecyclerView.LayoutManager mMediaLayoutManager;
-    RecyclerView.Adapter mMediaAdapter;
     String userid;
-    //ArrayList<String> classroomid;
+    ArrayList<String> classroomid;
 
     ValueEventListener seenListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message);
+        setContentView(R.layout.activity_classroom_message);
 
         //Widgets
-        imageView = findViewById(R.id.imageView_profilepic);
-        username = findViewById(R.id.usernamemessage);
-        sendBtn = findViewById(R.id.btn_send);
-        imageBtn = findViewById(R.id.imgBtn_send);
-        msg_editText = findViewById(R.id.text_send);
-
+        classRoomPic = findViewById(R.id.chatroom_pic);
+        classRoomTitle = findViewById(R.id.chatroom_title);
+        classRoomSendBtn = findViewById(R.id.btn_send69);
+        classRoomImageBtn = findViewById(R.id.imgBtn_send69);
+        classRoomEditText = findViewById(R.id.editTextMessage_send69);
 
         //RecyclerView
-        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.chatroom_recycler);
         recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -128,35 +99,36 @@ public class MessageActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         intent = getIntent();
-        userid = intent.getStringExtra("userid");
-        //classroomid = intent.getStringArrayListExtra("classroomid");
-
-        fuser = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid); //This sets up the database reference to directly message any user on Firebase
-        //reference = FirebaseDatabase.getInstance().getReference("ChatRooms");
+        //userid = intent.getStringExtra("userid");
+        classroomid = intent.getStringArrayListExtra("classroomid");
 
         //Initialize Loading Bar
         loadingBar = new ProgressDialog(this);
 
-//        initializeMedia();
-
         //Profile Image reference in storage
         storageReference = FirebaseStorage.getInstance().getReference("images");
 
-        reference.addValueEventListener(new ValueEventListener() {
+        fuser = FirebaseAuth.getInstance().getCurrentUser();
+        //reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid);
+        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms");
+
+        classRoomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Users user = dataSnapshot.getValue(Users.class);
-                username.setText(user.getUsername());
+                Classrooms classrooms = dataSnapshot.getValue(Classrooms.class);
+                classRoomTitle.setText(classrooms.getId());
 
-                if(user.getImageURL().equals("default")){
-                    imageView.setImageResource(R.mipmap.ic_launcher);
-                }else{
-                    Glide.with(MessageActivity.this)
-                            .load(user.getImageURL())
-                            .into(imageView);
-                }
-                readMessages(fuser.getUid(), userid, user.getImageURL());
+
+                    if (classrooms.getClassImageURL() != null && classrooms.getClassImageURL().equals("default")) {
+                        classRoomPic.setImageResource(R.mipmap.ic_launcher);
+                    } else {
+                        Glide.with(ClassRoomMessageActivity.this)
+                                .load(classrooms.getClassImageURL())
+                                .into(classRoomPic);
+                    }
+
+
+                readMessages(fuser.getUid(),classroomid, classrooms.getClassImageURL());
             }
 
             @Override
@@ -166,20 +138,20 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         //Sending message button listener
-        sendBtn.setOnClickListener(new View.OnClickListener() {
+        classRoomSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String msg = msg_editText.getText().toString();
+                String msg = classRoomEditText.getText().toString();
                 if(!msg.equals("")){
-                    sendMessage(fuser.getUid(), userid, msg);
+                    sendMessage(fuser.getUid(), classroomid.toString(), msg);
                 }else{
-                    Toast.makeText(MessageActivity.this, "Please send a non empty message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ClassRoomMessageActivity.this, "Please send a non empty message", Toast.LENGTH_SHORT).show();
                 }
-                msg_editText.setText("");
+                classRoomEditText.setText("");
             }
         });
 
-        imageBtn.setOnClickListener(new View.OnClickListener() {
+        classRoomImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SelectImage();
@@ -201,7 +173,7 @@ public class MessageActivity extends AppCompatActivity {
     HashMap<String, Object> messageMap = new HashMap<>();
     private void UploadMyImage(){
 
-        final ProgressDialog progressDialog = new ProgressDialog(MessageActivity.this);
+        final ProgressDialog progressDialog = new ProgressDialog(ClassRoomMessageActivity.this);
         progressDialog.setMessage("Uploading");
         progressDialog.show();
 
@@ -228,7 +200,7 @@ public class MessageActivity extends AppCompatActivity {
                         Uri downloadUri = task.getResult();
                         String mUri = downloadUri.toString();
 
-                        reference = FirebaseDatabase.getInstance().getReference();
+                        classRoomReference = FirebaseDatabase.getInstance().getReference();
 
                         Calendar c = Calendar.getInstance();
 
@@ -243,27 +215,27 @@ public class MessageActivity extends AppCompatActivity {
                         messageMap.put("messageType", "image");
                         messageMap.put("Date and Time", formattedDate);
                         //reference.updateChildren(messageMap);
-                        reference.child("Chats").push().setValue(messageMap);
+                        classRoomReference.child("ChatRooms").child("Messages").push().setValue(messageMap);
                         //sendMessage(fuser.getUid(), userid, mUri);
 
-                        messageAdapter = new MessageAdapter(MessageActivity.this,mChat, imageUri);
+                        messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat, imageUri);
 
                         progressDialog.dismiss();
                     }
                     else{
-                        Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ClassRoomMessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(MessageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ClassRoomMessageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
                 }
             });
         }
         else{
-            Toast.makeText(MessageActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ClassRoomMessageActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -277,7 +249,7 @@ public class MessageActivity extends AppCompatActivity {
             imageUri = data.getData();
 
             if(uploadTask != null && uploadTask.isInProgress()){
-                Toast.makeText(MessageActivity.this, "Upload in progress...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ClassRoomMessageActivity.this, "Upload in progress...", Toast.LENGTH_SHORT).show();
             }else{
                 UploadMyImage();
 
@@ -299,9 +271,10 @@ public class MessageActivity extends AppCompatActivity {
     //Changes message to seen when receiver sees the sender"s message
     private void SeenMessage(String userid){
 
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();//Gets the key of the chatroom from Firebase
+        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(key).child("Messages");
 
-        seenListener = reference.addValueEventListener(new ValueEventListener() {
+        seenListener = classRoomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -330,7 +303,8 @@ public class MessageActivity extends AppCompatActivity {
 
     private void sendMessage(String sender, String receiver, String message){
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();//Gets the key of the chatroom from Firebase
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(key);
 
         Calendar c = Calendar.getInstance();
 
@@ -339,57 +313,17 @@ public class MessageActivity extends AppCompatActivity {
         //Adds message info to database
 //        HashMap<String, Object> hashMap = new HashMap<>();
         messageMap.put("sender", sender);
-        messageMap.put("receiver", receiver); //The chatroom will receive this message
+        messageMap.put("receiver", classroomid); //The chatroom id will receive this message
         messageMap.put("message", message);
         messageMap.put("isseen",false);
         messageMap.put("messageType", "message");
         messageMap.put("Date and Time", formattedDate);
-        reference.child("Chats").push().setValue(messageMap); //saves each message info into folder Chats
-        //reference.child("ChatRooms").child("Messages").push().setValue((messageMap)); //saves each message into ChatRooms/Messages
+        messageMap.put("Messages/" + reference.child(key).push().setValue(messageMap), true);
+        //reference.child(key).child("Messages").push().setValue(messageMap); //saves each message into ChatRooms/ Proper chat room/ Messages(not working)
 
-        //Allows user to select multiple media pictures to send at once
-        //Puts the media files in an arraylist
-//        if(!mediaUriList.isEmpty()){
-//            for(String mediaUri : mediaUriList){
-//                String mediaId = reference.child("media").push().getKey();
-//                mediaIdList.add(mediaId);
-//                final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("images");
-//
-//                UploadTask uploadTask = filePath.putFile(Uri.parse(mediaUri));
-//
-//                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                            @Override
-//                            public void onSuccess(Uri uri) {
-//                                hashMap.put("/media/" + mediaIdList.get(totalMediaUploaded) + "/", uri.toString());
-//
-//                                totalMediaUploaded++;
-//                                if(totalMediaUploaded == mediaUriList.size()){
-//                                    updateDatabaseWithNewMessage(reference, hashMap);
-//                                }
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        }else{
-//            if(!msg_editText.getText().toString().isEmpty()){
-//                updateDatabaseWithNewMessage(reference, hashMap);
-//            }
-//        }
-// private void updateDatabaseWithNewMessage(DatabaseReference databaseReference, HashMap hashMap ){
-//        databaseReference.updateChildren(hashMap);
-//        mediaUriList.clear();
-//        mediaIdList.clear();
-//        mMediaAdapter.notifyDataSetChanged();
-//
-//    }
 
 
         //After chatting with user, adds User to chat fragment: Recent chats with contacts
-
         //Don't need this code because we have chatrooms now instead of individual messaging(save for future use)
         final DatabaseReference chatRef = FirebaseDatabase.getInstance()
                 .getReference("ChatList")
@@ -412,13 +346,13 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    private void readMessages(String myid, String userid, String imageURL){
+    private void readMessages(String myid, ArrayList<String> classroomid, String imageURL){
         mChat = new ArrayList<>();
 
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
-        //reference = FirebaseDatabase.getInstance.getReference("ChatRooms").child("Messages"); //Retrieves all messages from ChatRooms/Messages
+        String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();//Gets the key of the chatroom from Firebase
+        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(key).child("Messages"); //Retrieves all messages from ChatRooms/Chatroom ID/ Messages
 
-        reference.addValueEventListener(new ValueEventListener() {
+        classRoomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mChat.clear();
@@ -426,11 +360,11 @@ public class MessageActivity extends AppCompatActivity {
                     Chat chat = snapshot.getValue(Chat.class);
 
                     if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
-                        chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
 
                         mChat.add(chat);
                     }
-                    messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageURL);
+                    messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat, imageURL);
                     recyclerView.setAdapter(messageAdapter);
                 }
             }
@@ -443,32 +377,32 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    //Checks online or offline status of a user
-    private void CheckStatus(String status){
-
-        reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(fuser.getUid());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("status", status);
-
-        reference.updateChildren(hashMap);
-
-    }
-
-    //Online status
-    @Override
-    protected void onResume(){
-        super.onResume();
-        CheckStatus("Online");
-    }
-
-    //Offline status
-    @Override
-    protected void onPause(){
-        super.onPause();
-        reference.removeEventListener(seenListener);
-        CheckStatus("Offline");
-    }
+//    //Checks online or offline status of a user
+//    private void CheckStatus(String status){
+//
+//        reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(fuser.getUid());
+//
+//        HashMap<String, Object> hashMap = new HashMap<>();
+//        hashMap.put("status", status);
+//
+//        reference.updateChildren(hashMap);
+//
+//    }
+//
+//    //Online status
+//    @Override
+//    protected void onResume(){
+//        super.onResume();
+//        CheckStatus("Online");
+//    }
+//
+//    //Offline status
+//    @Override
+//    protected void onPause(){
+//        super.onPause();
+//        reference.removeEventListener(seenListener);
+//        CheckStatus("Offline");
+//    }
 
 
 

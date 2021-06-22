@@ -71,17 +71,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         //Displays the chat_item_right layout on right hand side
         if (viewType == MSG_TYPE_LEFT){
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left,
-                parent,
-                false);
-        return new MessageAdapter.ViewHolder(view);
-
-    }else {
-            View view = LayoutInflater.from(context).inflate(R.layout.chat_item_right,
+            View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left,
                     parent,
                     false);
             return new MessageAdapter.ViewHolder(view);
-        }
+
+        }else {
+                View view = LayoutInflater.from(context).inflate(R.layout.chat_item_right,
+                        parent,
+                        false);
+                return new MessageAdapter.ViewHolder(view);
+            }
     }
 
     private StorageReference ImagesRef;

@@ -70,16 +70,14 @@ public class UserFragment extends Fragment {
     private void createChatRoom() {
 
         String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().getKey(); //Generates the chatroom ID as a key, then assigns the chatroom ID to each participating user
-        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("MyUsers");//Gives the chatroom ID to the selected user inside chatroom
-        //System.out.println("key: " + key);
-        DatabaseReference chatInfoDb = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(key);//Creates a folder "Chat Rooms", generates Chat Room ID, then gives this chat room ID to the selected users.
+        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("MyUsers"); //Declares MyUsers database reference
+
+        DatabaseReference chatRoomInfoDb = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(key);//Creates a folder "Chat Rooms", saves the Chat Room ID.
 
         HashMap newChatRoom = new HashMap<>();
         newChatRoom.put("users/" + FirebaseAuth.getInstance().getUid(), true);//Puts all user IDs inside chatroom folder
-        //reference.child("ChatRooms").push().setValue(newChatRoom);
 
         Boolean validChat = false;
-
 
         System.out.println("I am in chat room");
 
@@ -88,14 +86,14 @@ public class UserFragment extends Fragment {
             if(oneUser.getSelected()){
                 validChat = true;
                 newChatRoom.put("users/" + oneUser.getId(), true);
-                userDb.child(oneUser.getId()).child("ChatRooms").child(key).setValue(true);
+                userDb.child(oneUser.getId()).child("ChatRooms").child(key).setValue(true);//Gives the chatroom ID to the selected users inside chatroom
             }
         }
 
         //Only creates a chat room if at least one user is in it
         if (validChat) {
             //Updates children
-            chatInfoDb.updateChildren(newChatRoom);
+            chatRoomInfoDb.updateChildren(newChatRoom);
             userDb.child(FirebaseAuth.getInstance().getUid()).child("ChatRooms").child(key).setValue(true);//Chatroom owner
         }
     }

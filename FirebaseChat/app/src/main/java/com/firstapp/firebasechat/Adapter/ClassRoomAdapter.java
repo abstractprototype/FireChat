@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.firstapp.firebasechat.ClassRoomMessageActivity;
 import com.firstapp.firebasechat.MessageActivity;
 import com.firstapp.firebasechat.Model.Classrooms;
 import com.firstapp.firebasechat.Model.Users;
@@ -28,11 +29,11 @@ import java.util.List;
 public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.ViewHolder> {
 
     private Context context;
-    private List<String> mRooms;
+    private ArrayList<String> mRooms;
     private boolean isChat;
 
     //Constructor
-    public ClassRoomAdapter(Context context, List<String> mRooms, boolean isChat){
+    public ClassRoomAdapter(Context context, ArrayList<String> mRooms, boolean isChat){
         this.context = context;
         this.mRooms = mRooms;
         this.isChat = isChat;
@@ -54,26 +55,25 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
         holder.classroomName.setText(mRooms.get(position));
 
-
-
-        //For profile picture of classroom
-       /* if(classrooms.getImageURL().equals("default")){
-            holder.classroomImage.setImageResource(R.mipmap.ic_launcher);
-        }else{
-            // Adding Glide Library
-            Glide.with(context)
-                    .load(classrooms.getImageURL())
-                    .into(holder.classroomImage);
-        }*/
+//        //For profile picture of classroom
+//        if(classrooms.getImageURL().equals("default")){
+//            holder.classroomImage.setImageResource(R.mipmap.ic_launcher);
+//        }else{
+//            // Adding Glide Library
+//            Glide.with(context)
+//                    .load(classrooms.getImageURL())
+//                    .into(holder.classroomImage);
+//        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(context, MessageActivity.class);
-               // i.putExtra("classroomid", classrooms.getId());
+                Intent i = new Intent(context, ClassRoomMessageActivity.class);
+                //i.putExtra("classroomid", classrooms.getId());
+                i.putStringArrayListExtra("classroomid", (ArrayList<String>) mRooms);
+                //i.putExtra("classroomid", mRooms.get(holder.getAdapterPosition()));
                 context.startActivity(i);
-
 
             }
         });

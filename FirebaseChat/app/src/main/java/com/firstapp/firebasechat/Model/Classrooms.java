@@ -1,18 +1,22 @@
 package com.firstapp.firebasechat.Model;
 
+import java.io.Serializable;
+import java.util.List;
+
 public class Classrooms {
 
     private String id;
-    private String chatImageURL;
+    private String classImageURL;
+
 
     public Classrooms(){
 
     }
 
-    public Classrooms(String user)
+    public Classrooms(String user, String classImageURL)
     {
         this.id = id;
-        this.chatImageURL = chatImageURL;
+        this.classImageURL = classImageURL;
     }
 
     public String getId() {
@@ -23,11 +27,11 @@ public class Classrooms {
         this.id = id;
     }
 
-    public String getImageURL() {
-        return chatImageURL;
+    public String getClassImageURL() {
+        return classImageURL;
     }
 
-    public void setImageURL(String imageURL) {
-        this.chatImageURL = chatImageURL;
+    public void setClassImageURL(String classImageURL) {
+        this.classImageURL = classImageURL;
     }
 }

@@ -35,7 +35,7 @@ public class ClassRoomsFragment extends Fragment {
     //private List<Users> mUsers; //List of total existing users on Firebase
 
     private List<Classrooms> classroomsList; //List of recent classrooms with users
-    private List<String> classrooms;
+    private ArrayList<String> classrooms;
     private List<String> myUsers;
 
     FirebaseUser fuser;
@@ -77,7 +77,6 @@ public class ClassRoomsFragment extends Fragment {
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
 
                 classroomsList.clear();
 

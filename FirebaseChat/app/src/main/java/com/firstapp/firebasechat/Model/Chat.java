@@ -15,6 +15,7 @@ public class Chat {
         messageMap.put("isseen",false);
         messageMap.put("messageType", "message");
         messageMap.put("Date and Time", formattedDate);*/
+
     public Chat(String sender, String receiver, String message, boolean isseen, String messageType, String DateandTime) {
         this.sender = sender;
         this.receiver = receiver;
