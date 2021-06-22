@@ -65,6 +65,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.messageType = "image";
     }
 
+    public MessageAdapter(Context context, List<Chat> mChat){ //Sending Image only
+        this.mChat = mChat;
+        this.context = context;
+        this.image = image;
+        this.messageType = "text";
+        this.imgURL ="default";
+    }
+
+
     @NonNull
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull  ViewGroup parent, int viewType) {
@@ -92,7 +101,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Chat chat = mChat.get(position);
 
 
-        //System.out.println("message type: " + messageType);
+        System.out.println("message type: " + messageType);
        // System.out.println("")
       /* if(chat.getMessage().charAt(0) == 'h' && chat.getMessage().charAt(1) == 't'
                 && chat.getMessage().charAt(2) == 't' && chat.getMessage().charAt(3) == 'p'

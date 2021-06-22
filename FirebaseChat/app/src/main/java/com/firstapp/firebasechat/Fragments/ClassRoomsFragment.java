@@ -74,32 +74,11 @@ public class ClassRoomsFragment extends Fragment {
         roomReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms");
         System.out.println("saving chat room key");
         System.out.println("roomList ");
-        roomReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                classroomsList.clear();
+        classroomsList.clear();
+        classroomsList();
 
-                //Gets all the data from Firebase for all Class Rooms:
-                for(DataSnapshot snapshot1 : snapshot.getChildren()){
-                    //classrooms.add(snapshot1.getValue().toString());
-                    //Classrooms roomList = snapshot1.getValue(Classrooms.class);
 
-                    //System.out.println("roomList " + roomList.getId());
-                    //classroomsList.add(roomList);//Adds to the view all the classrooms to our array list called classroomsList
-                   // System.out.println("Getting snapshot of existing chatrooms");
-                    //System.out.println("Adding existing chatrooms to our array list");
-                }
-
-                classroomsList();
-                System.out.println("Calling classroomsList function");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         return view;
     }
@@ -119,9 +98,8 @@ public class ClassRoomsFragment extends Fragment {
                 classrooms.clear();
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
 
-
-                    System.out.println("room reference");
                     classrooms.add(snapshot1.getKey().toString());
+
 
                     /*Classrooms cRooms = snapshot1.getValue(Classrooms.class);
                     for(Classrooms classList : classroomsList){

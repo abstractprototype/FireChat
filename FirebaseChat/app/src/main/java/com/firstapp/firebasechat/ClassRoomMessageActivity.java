@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firstapp.firebasechat.Adapter.ClassRoomAdapter;
 import com.firstapp.firebasechat.Adapter.MessageAdapter;
 import com.firstapp.firebasechat.Model.Chat;
 import com.firstapp.firebasechat.Model.Classrooms;
@@ -35,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -58,7 +60,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
     FirebaseUser fuser;
     DatabaseReference classRoomReference;
-    Intent intent;
+    private Intent intent;
 
     //Loading Bar
     private ProgressDialog loadingBar;
@@ -74,7 +76,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     String userid;
-    ArrayList<String> classroomid;
+    private String classroomid;
 
     ValueEventListener seenListener;
 
@@ -82,6 +84,9 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_classroom_message);
+
+        intent = getIntent();
+        classroomid = intent.getStringExtra("classroomName");
 
         //Widgets
         classRoomPic = findViewById(R.id.chatroom_pic);
@@ -98,9 +103,9 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        intent = getIntent();
+
         //userid = intent.getStringExtra("userid");
-        classroomid = intent.getStringArrayListExtra("classroomid");
+       // classroomid = intent.getStringArrayListExtra("classroomid");
 
         //Initialize Loading Bar
         loadingBar = new ProgressDialog(this);
@@ -115,20 +120,20 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         classRoomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Classrooms classrooms = dataSnapshot.getValue(Classrooms.class);
+                Users classrooms = dataSnapshot.getValue(Users.class);
                 classRoomTitle.setText(classrooms.getId());
 
 
-                    if (classrooms.getClassImageURL() != null && classrooms.getClassImageURL().equals("default")) {
+                   /* if (classrooms.getClassImageURL() != null && classrooms.getClassImageURL().equals("default")) {
                         classRoomPic.setImageResource(R.mipmap.ic_launcher);
                     } else {
                         Glide.with(ClassRoomMessageActivity.this)
                                 .load(classrooms.getClassImageURL())
                                 .into(classRoomPic);
-                    }
+                    }*/
 
 
-                readMessages(fuser.getUid(),classroomid, classrooms.getClassImageURL());
+                readMessages(fuser.getUid(),classroomid);
             }
 
             @Override
@@ -137,13 +142,15 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
             }
         });
 
+
+
         //Sending message button listener
         classRoomSendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String msg = classRoomEditText.getText().toString();
                 if(!msg.equals("")){
-                    sendMessage(fuser.getUid(), classroomid.toString(), msg);
+                    sendMessage(fuser.getUid(), classroomid, msg);
                 }else{
                     Toast.makeText(ClassRoomMessageActivity.this, "Please send a non empty message", Toast.LENGTH_SHORT).show();
                 }
@@ -158,7 +165,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
             }
         });
 
-        SeenMessage(userid);
+
 
     }
 
@@ -209,9 +216,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
                         //HashMap<String, Object> map = new HashMap<>();
                         messageMap.put("sender", fuser.getUid());
-                        messageMap.put("receiver", userid);
                         messageMap.put("message", mUri);
-                        messageMap.put("isseen",false);
                         messageMap.put("messageType", "image");
                         messageMap.put("Date and Time", formattedDate);
                         //reference.updateChildren(messageMap);
@@ -268,34 +273,6 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
 
 
-    //Changes message to seen when receiver sees the sender"s message
-    private void SeenMessage(String userid){
-
-        String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();//Gets the key of the chatroom from Firebase
-        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(key).child("Messages");
-
-        seenListener = classRoomReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                for(DataSnapshot snapshot1 : snapshot.getChildren()){
-                    Chat chat = snapshot1.getValue(Chat.class);
-
-                    if(chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userid) ){
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("isseen", true);
-                        snapshot1.getRef().updateChildren(hashMap);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull  DatabaseError error) {
-
-            }
-        });
-    }
 
 
     int totalMediaUploaded = 0;
@@ -303,8 +280,9 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
     private void sendMessage(String sender, String receiver, String message){
 
-        String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();//Gets the key of the chatroom from Firebase
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(key);
+        //String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(classroomid);//Gets the key of the chatroom from Firebase
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(classroomid).child("Messages");
+
 
         Calendar c = Calendar.getInstance();
 
@@ -313,59 +291,48 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         //Adds message info to database
 //        HashMap<String, Object> hashMap = new HashMap<>();
         messageMap.put("sender", sender);
-        messageMap.put("receiver", classroomid); //The chatroom id will receive this message
+        messageMap.put("classroomID", classroomid); //The chatroom id will receive this message
         messageMap.put("message", message);
-        messageMap.put("isseen",false);
         messageMap.put("messageType", "message");
         messageMap.put("Date and Time", formattedDate);
-        messageMap.put("Messages/" + reference.child(key).push().setValue(messageMap), true);
+        //messageMap.put("Messages/" + , true);
+        reference.push().setValue(messageMap);
         //reference.child(key).child("Messages").push().setValue(messageMap); //saves each message into ChatRooms/ Proper chat room/ Messages(not working)
 
 
 
-        //After chatting with user, adds User to chat fragment: Recent chats with contacts
-        //Don't need this code because we have chatrooms now instead of individual messaging(save for future use)
-        final DatabaseReference chatRef = FirebaseDatabase.getInstance()
-                .getReference("ChatList")
-                .child(fuser.getUid())
-                .child(userid); //Creating a unique chat with receiver and sender in Chatlist folder. Includes the user ID
-
-        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.exists()){
-                    chatRef.child("id").setValue(userid);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
     }
 
-    private void readMessages(String myid, ArrayList<String> classroomid, String imageURL){
+    private void readMessages(String myid, String classroomid){
         mChat = new ArrayList<>();
 
         String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();//Gets the key of the chatroom from Firebase
-        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(key).child("Messages"); //Retrieves all messages from ChatRooms/Chatroom ID/ Messages
+        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(classroomid).child("Messages"); //Retrieves all messages from ChatRooms/Chatroom ID/ Messages
 
         classRoomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mChat.clear();
+                System.out.println("I am here my friend");
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
+                    System.out.println("I am database");
 
-                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
-                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                    try {
 
-                        mChat.add(chat);
+
+                            mChat.add(chat);
+
+
+
+                        //messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat, imageURL);
+                        messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat);
+                        recyclerView.setAdapter(messageAdapter);
+                    }catch(Exception e){
+
                     }
-                    messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat, imageURL);
-                    recyclerView.setAdapter(messageAdapter);
+
+                    // recyclerView.setAdapter(new ClassRoomAdapter(ClassRoomMessageActivity.this, mChat, imageURL));
                 }
             }
 

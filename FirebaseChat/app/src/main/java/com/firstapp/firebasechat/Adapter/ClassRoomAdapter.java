@@ -65,7 +65,19 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 //                    .into(holder.classroomImage);
 //        }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener(){
+        holder.classroomName.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                System.out.println("classroom: " + holder.classroomName.getText());
+                Intent i = new Intent(context, ClassRoomMessageActivity.class);
+                i.putExtra("classroomName", holder.classroomName.getText());
+                context.startActivity(i);
+
+            }
+        });
+
+        /*holder.itemView.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
@@ -76,7 +88,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
                 context.startActivity(i);
 
             }
-        });
+        });*/
 
     }
 
@@ -88,12 +100,22 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView classroomImage;
         public TextView classroomName;
+        /*public TextView show_message;
+        public ImageView profile_image;
+        public TextView txt_seen;
+        public ImageView show_image;
+        public ImageView another_image;*/
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             classroomImage = itemView.findViewById(R.id.classroomImage);
             classroomName = itemView.findViewById(R.id.classroomName);
+            /*show_message = itemView.findViewById(R.id.show_message);
+            profile_image = itemView.findViewById(R.id.profile_image);
+            txt_seen = itemView.findViewById(R.id.txt_seen_status);
+            show_image = itemView.findViewById(R.id.image_id);
+            another_image = itemView.findViewById(R.id.media);*/
 
         }
     }

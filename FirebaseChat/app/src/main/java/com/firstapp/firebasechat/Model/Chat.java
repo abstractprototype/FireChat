@@ -27,6 +27,15 @@ public class Chat {
 
 
 
+    public Chat(String sender, String classroomID, String message, String DateandTime){
+        this.sender = sender;
+        this.receiver = classroomID;
+        this.message = message;
+        this.DateandTime = DateandTime;
+    }
+
+
+
 
     public Chat() {
 

@@ -307,6 +307,8 @@ public class MessageActivity extends AppCompatActivity {
 
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
                     Chat chat = snapshot1.getValue(Chat.class);
+                    if(chat.getReceiver() == null)
+                        break;
 
                     if(chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userid) ){
                         HashMap<String, Object> hashMap = new HashMap<>();
@@ -425,13 +427,17 @@ public class MessageActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
 
-                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
-                        chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                    try {
+                        if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
+                                chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
 
-                        mChat.add(chat);
+                            mChat.add(chat);
+                        }
+                        messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageURL);
+                        recyclerView.setAdapter(messageAdapter);
+                    }catch(Exception e){
+
                     }
-                    messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageURL);
-                    recyclerView.setAdapter(messageAdapter);
                 }
             }
 
