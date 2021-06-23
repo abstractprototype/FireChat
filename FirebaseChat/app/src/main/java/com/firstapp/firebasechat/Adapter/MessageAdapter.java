@@ -145,9 +145,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
        // filePath.getFile(Uri.parse(chat.getMessage()));
 
 
-
-
-
         try{
             if(messageType.equals("image"))
             Picasso.with(this.context).load(Uri.parse(chat.getMessage())).into(holder.show_image);

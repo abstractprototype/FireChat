@@ -56,7 +56,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
         holder.classroomName.setText(mRooms.get(position));
 
 //        //For profile picture of classroom
-//        if(classrooms.getImageURL().equals("default")){
+//        if(classroom.getImageURL().equals("default")){
 //            holder.classroomImage.setImageResource(R.mipmap.ic_launcher);
 //        }else{
 //            // Adding Glide Library
@@ -100,6 +100,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView classroomImage;
         public TextView classroomName;
+
         /*public TextView show_message;
         public ImageView profile_image;
         public TextView txt_seen;
@@ -111,6 +112,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
             classroomImage = itemView.findViewById(R.id.classroomImage);
             classroomName = itemView.findViewById(R.id.classroomName);
+
             /*show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
             txt_seen = itemView.findViewById(R.id.txt_seen_status);

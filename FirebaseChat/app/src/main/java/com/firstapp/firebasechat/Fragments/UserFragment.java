@@ -7,15 +7,19 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firstapp.firebasechat.Adapter.UserAdapter;
 import com.firstapp.firebasechat.Model.Chat;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
+import com.firstapp.firebasechat.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -54,12 +58,19 @@ public class UserFragment extends Fragment {
 
         ReadUsers();
 
+        //Edit text widgets for room creation
+        EditText roomNameET = view.findViewById(R.id.editChatRoomName);
+        EditText roomPassET = view.findViewById(R.id.editChatRoomPassword);
+
         Button mCreate = view.findViewById(R.id.createChatRoom);
         mCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createChatRoom();
-                //new ClassRoomsFragment();
+                String rName = roomNameET.getText().toString();
+                String rPassword = roomPassET.getText().toString();
+
+                createChatRoom(rName, rPassword);
+
             }
         });
 
@@ -67,7 +78,7 @@ public class UserFragment extends Fragment {
 
     }
 
-    private void createChatRoom() {
+    private void createChatRoom(String roomName, String roomPassword) {
 
         String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().getKey(); //Generates the chatroom ID as a key, then assigns the chatroom ID to each participating user
         DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("MyUsers"); //Declares MyUsers database reference
@@ -76,10 +87,10 @@ public class UserFragment extends Fragment {
 
         HashMap newChatRoom = new HashMap<>();
         newChatRoom.put("users/" + FirebaseAuth.getInstance().getUid(), true);//Puts all user IDs inside chatroom folder
+        newChatRoom.put("Room Name/" + roomName, true);
+        newChatRoom.put("Room Password/" + roomPassword, true);
 
         Boolean validChat = false;
-
-        System.out.println("I am in chat room");
 
         //Loops through selected users then puts them inside a chat room
         for(Users oneUser: mUsers){
@@ -99,6 +110,7 @@ public class UserFragment extends Fragment {
     }
 
 
+    //Displays all the users on Firebase, we are removing this before launching app.
     private void ReadUsers(){
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("MyUsers");

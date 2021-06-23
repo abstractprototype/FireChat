@@ -11,14 +11,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="Create a Chat Room"
-        />
+        android:text="Create a Class Room" />
+
+    <Button
+        android:id="@+id/joinChatRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join a Classroom"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"/>
+
+    <EditText
+        android:id="@+id/editChatRoomName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Room Name"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/editChatRoomPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Room Password"
+        android:inputType="textPassword" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white" />
+
+
 
 </LinearLayout>

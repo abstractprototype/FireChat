@@ -69,27 +69,22 @@ public class ClassRoomsFragment extends Fragment {
         roomReference = FirebaseDatabase.getInstance().getReference("ChatRooms")//Gets the users inside the Chatroom folder
                 .child(fuser.getUid());
 
-        String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey();
-        System.out.println("finding chat room key");
-        roomReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms");
-        System.out.println("saving chat room key");
-        System.out.println("roomList ");
+        String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").getKey(); //This code is not doing anything?
+        //roomReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms");
+        roomReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child("Room Name");//This code also not doing anything?
 
         classroomsList.clear();
         classroomsList();
-
-
 
         return view;
     }
 
     private void classroomsList() {
-        //System.out.println("I am here classroom " );
+
         //Getting all recent Chat Rooms :
         classroomsList = new ArrayList<>();
         roomReference = FirebaseDatabase.getInstance().getReference("MyUsers").child(fuser.getUid())
                 .child("ChatRooms");
-
 
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -98,8 +93,12 @@ public class ClassRoomsFragment extends Fragment {
                 classrooms.clear();
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
 
+                    //classrooms.add(snapshot1.getKey().toString());//gives me room id
                     classrooms.add(snapshot1.getKey().toString());
 
+//                    for(DataSnapshot snapshot2 : snapshot1.getChildren()){
+//                        classrooms.add(snapshot2.getKey().toString());
+//                    }
 
                     /*Classrooms cRooms = snapshot1.getValue(Classrooms.class);
                     for(Classrooms classList : classroomsList){
@@ -108,7 +107,7 @@ public class ClassRoomsFragment extends Fragment {
                             classroomsList.add(cRooms);
                         System.out.println("I am here " + cRooms.getId());
                      //   }
-//                        classroomsList.add(cRooms);
+                        classroomsList.add(cRooms);
                     }*/
 
                     myUsers.add(snapshot1.getValue().toString());
