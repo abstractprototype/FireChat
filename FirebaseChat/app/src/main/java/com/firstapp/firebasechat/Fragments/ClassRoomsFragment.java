@@ -40,8 +40,11 @@ public class ClassRoomsFragment extends Fragment {
 
     FirebaseUser fuser;
     DatabaseReference roomReference;
+    DatabaseReference roomRef;
 
     RecyclerView recyclerView;
+    private ArrayList<String> classIDList;
+    private ArrayList<String> roomNameList;
 
     public ClassRoomsFragment() {
         // Required empty public constructor
@@ -82,39 +85,40 @@ public class ClassRoomsFragment extends Fragment {
     private void classroomsList() {
 
         //Getting all recent Chat Rooms :
-        classroomsList = new ArrayList<>();
+        classIDList = new ArrayList<>();
+        roomNameList = new ArrayList<>();
         roomReference = FirebaseDatabase.getInstance().getReference("MyUsers").child(fuser.getUid())
                 .child("ChatRooms");
 
         roomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //classroomsList.clear();
+
                 classrooms.clear();
+                classIDList.clear();
+
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
 
-                    //classrooms.add(snapshot1.getKey().toString());//gives me room id
-                    classrooms.add(snapshot1.getKey().toString());
+                    roomRef = FirebaseDatabase.getInstance().getReference("ChatRooms").child(snapshot1.getKey().toString())
+                            .child("Room Name");
+                    roomRef.addValueEventListener(new ValueEventListener() {
 
-//                    for(DataSnapshot snapshot2 : snapshot1.getChildren()){
-//                        classrooms.add(snapshot2.getKey().toString());
-//                    }
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                classrooms.add(snapshot1.getKey().toString());
+                            }
+                            classRoomAdapter = new ClassRoomAdapter(getContext(), classrooms, true);
+                            recyclerView.setAdapter(classRoomAdapter);
+                        }
 
-                    /*Classrooms cRooms = snapshot1.getValue(Classrooms.class);
-                    for(Classrooms classList : classroomsList){
-                        //if(cRooms.getId().equals(classList.getId())){
-                        //    System.out.println("I am here " + cRooms.getId());
-                            classroomsList.add(cRooms);
-                        System.out.println("I am here " + cRooms.getId());
-                     //   }
-                        classroomsList.add(cRooms);
-                    }*/
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    myUsers.add(snapshot1.getValue().toString());
+                        }
+
+                    });
                 }
-
-                classRoomAdapter = new ClassRoomAdapter(getContext(), classrooms, true);
-                recyclerView.setAdapter(classRoomAdapter);
             }
 
             @Override
@@ -122,7 +126,5 @@ public class ClassRoomsFragment extends Fragment {
 
             }
         });
-
     }
-
 }
