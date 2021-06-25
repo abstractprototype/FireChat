@@ -37,11 +37,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
 
     //Constructor
-    /*public ClassRoomAdapter(Context context, ArrayList<String> mRooms, boolean isChat){
-        this.context = context;
-        this.mRooms = mRooms;
-        this.isChat = isChat;
-    }*/
+
 
     public ClassRoomAdapter(Context context, ArrayList<Classrooms> mRooms, boolean isChat){
         this.context = context;
@@ -52,6 +48,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
     @NonNull
     @Override
+    //it initializes the classroom items and holds it in view
     public ViewHolder onCreateViewHolder(@NonNull  ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.classroom_item,
                 parent,
@@ -59,6 +56,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
         return new ClassRoomAdapter.ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ClassRoomAdapter.ViewHolder holder, int position) {
@@ -79,24 +77,17 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
         holder.classroomName.setOnClickListener(new View.OnClickListener(){
 
+
+            //this is an onlick view when the user clicks a room name from the classroo
             @Override
             public void onClick(View v) {
                 System.out.println("classroom: " + holder.classroomName.getText());
                 Intent i = new Intent(context, ClassRoomMessageActivity.class);
-                //i.putExtra("classroomName", holder.classroomName.getText());
-               // i.putExtra("classroomName", mRooms);
-               // i.putExtra("classroomName", mRooms);
-               // cmRooms.add(mRooms.get(position).getRoomName());
-              //  cmRooms.add(mRooms.get(position).getId());
-                //i.putStringArrayListExtra("classroomName", cmRooms);
-                //i.putParcelableArrayListExtra("classroomName", mRooms);
+
 
                 HashMap<String, String> hashMap = new HashMap<String, String>();
                 hashMap.put("roomName", mRooms.get(position).getRoomName());
                 hashMap.put("id", mRooms.get(position).getId());
-                //hashMap.put(mRooms.get(position).getRoomName(), "classRoomName");
-
-
 
                 i.putExtra("classroomName", hashMap);
                 context.startActivity(i);
