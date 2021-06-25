@@ -7,6 +7,7 @@ import java.util.List;
 public class Classrooms {
 
     private String id;
+    private String classRoomName;
     private String classImageURL;
     private ArrayList<String> listofUsers;
 
@@ -14,9 +15,10 @@ public class Classrooms {
         listofUsers = users;
     }
 
-    public Classrooms(String user, String classImageURL)
+    public Classrooms(String id, String classRoomName, String classImageURL)
     {
         this.id = id;
+        this.classRoomName = classRoomName;
         this.classImageURL = classImageURL;
     }
 
@@ -34,6 +36,14 @@ public class Classrooms {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getClassRoomName() {
+        return classRoomName;
+    }
+
+    public void setClassRoomName(String classRoomName) {
+        this.classRoomName = classRoomName;
     }
 
     public String getClassImageURL() {

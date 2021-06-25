@@ -117,13 +117,14 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         //reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid);
         classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms");
 
+        classRoomTitle.setText("I am classroom title");
         classRoomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Users classrooms = dataSnapshot.getValue(Users.class);
-                classRoomTitle.setText(classrooms.getId());
+                //classRoomTitle.setText(classrooms.getId()); //Displays classroom title
 
-
+                //Displays classroom image
                    /* if (classrooms.getClassImageURL() != null && classrooms.getClassImageURL().equals("default")) {
                         classRoomPic.setImageResource(R.mipmap.ic_launcher);
                     } else {
@@ -131,7 +132,6 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
                                 .load(classrooms.getClassImageURL())
                                 .into(classRoomPic);
                     }*/
-
 
                 readMessages(fuser.getUid(),classroomid);
             }
@@ -141,8 +141,6 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
             }
         });
-
-
 
         //Sending message button listener
         classRoomSendBtn.setOnClickListener(new View.OnClickListener() {
@@ -320,10 +318,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
                     try {
 
-
                             mChat.add(chat);
-
-
 
                         //messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat, imageURL);
                         messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat);

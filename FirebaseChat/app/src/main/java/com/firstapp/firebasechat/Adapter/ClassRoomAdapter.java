@@ -55,6 +55,7 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
         holder.classroomName.setText(mRooms.get(position));
 
+
 //        //For profile picture of classroom
 //        if(classroom.getImageURL().equals("default")){
 //            holder.classroomImage.setImageResource(R.mipmap.ic_launcher);

@@ -1,5 +1,6 @@
 package com.firstapp.firebasechat.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,10 +17,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firstapp.firebasechat.Adapter.UserAdapter;
+import com.firstapp.firebasechat.Login_Activity;
+import com.firstapp.firebasechat.MainActivity;
 import com.firstapp.firebasechat.Model.Chat;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
 import com.firstapp.firebasechat.RegisterActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -74,8 +80,47 @@ public class UserFragment extends Fragment {
             }
         });
 
+        Button mJoin = view.findViewById(R.id.joinChatRoom);
+        mJoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String rName = roomNameET.getText().toString();
+                String rPassword = roomPassET.getText().toString();
+
+                joinChatRoom(rName, rPassword);
+            }
+        });
+
         return view;
 
+    }
+
+    //User must enter room ID and room password
+    private void joinChatRoom(String roomName, String roomPassword){
+
+        //Checking if fields are empty
+        if(TextUtils.isEmpty(roomName) || TextUtils.isEmpty(roomPassword)){
+            //Toast.makeText(Login_Activity.this,"Please fill the Fields", Toast.LENGTH_SHORT).show();
+
+        //Checking if correct room name and password
+        }else{
+//            auth.signInWithEmailAndPassword(email_text, pass_text)
+//                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<AuthResult> task) {
+//                            if(task.isSuccessful()){
+//                                Intent i = new Intent(Login_Activity.this, MainActivity.class);
+//                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                startActivity(i);
+//                                finish();
+//                            }
+//                            else{
+//                                Toast.makeText(Login_Activity.this, "Login Failed!", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
+
+        }
     }
 
     private void createChatRoom(String roomName, String roomPassword) {
@@ -108,7 +153,6 @@ public class UserFragment extends Fragment {
             userDb.child(FirebaseAuth.getInstance().getUid()).child("ChatRooms").child(key).setValue(true);//Chatroom owner
         }
     }
-
 
     //Displays all the users on Firebase, we are removing this before launching app.
     private void ReadUsers(){

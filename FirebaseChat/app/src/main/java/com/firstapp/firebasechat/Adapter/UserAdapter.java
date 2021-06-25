@@ -43,9 +43,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         View view = LayoutInflater.from(context).inflate(R.layout.user_item,
                 parent,
                  false);
-//        View view2 = LayoutInflater.from(context).inflate(R.layout.user_itemnocheckbox,
-//                parent,
-//                false);
+
         return new UserAdapter.ViewHolder(view);
     }
 
