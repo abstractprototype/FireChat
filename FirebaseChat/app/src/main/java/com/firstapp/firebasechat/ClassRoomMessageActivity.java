@@ -11,6 +11,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -77,6 +78,9 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     String userid;
     private String classroomid;
+    private static String cRoomID;
+    private HashMap<String, String> map;
+
 
     ValueEventListener seenListener;
 
@@ -86,8 +90,14 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_classroom_message);
 
         intent = getIntent();
-        classroomid = intent.getStringExtra("classroomName");
 
+        map = (HashMap<String, String>) intent.getSerializableExtra("classroomName");
+        //classroomid = intent.getStringExtra("classroomName");
+        //classroomid = intent.getStringArrayExtra("classroomName");
+        /*for (Parcelable e : intent.getParcelableArrayExtra("classroomName")) {
+            //classroomid.get(e.getClass());
+            classroomid.add(e.toString());
+        }*/
         //Widgets
         classRoomPic = findViewById(R.id.chatroom_pic);
         classRoomTitle = findViewById(R.id.chatroom_title);
@@ -115,14 +125,21 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         //reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid);
-        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms");
+        classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(map.get("id"));
 
-        classRoomTitle.setText("I am classroom title");
+        ArrayList<String> classrooms = new ArrayList<>();
         classRoomReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Users classrooms = dataSnapshot.getValue(Users.class);
-                //classRoomTitle.setText(classrooms.getId()); //Displays classroom title
+               //String classrooms = dataSnapshot.getKey().toString();
+                for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                   // classrooms.add(snapshot1.getKey().toString());
+                    System.out.println("snap: " + snapshot1);
+                }
+                classRoomTitle.setText(map.get("roomName")); //Displays classroom title
+            System.out.println(dataSnapshot);
+
+
 
                 //Displays classroom image
                    /* if (classrooms.getClassImageURL() != null && classrooms.getClassImageURL().equals("default")) {
@@ -133,7 +150,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
                                 .into(classRoomPic);
                     }*/
 
-                readMessages(fuser.getUid(),classroomid);
+                readMessages(fuser.getUid(),map.get("id"));
             }
 
             @Override
@@ -148,7 +165,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String msg = classRoomEditText.getText().toString();
                 if(!msg.equals("")){
-                    sendMessage(fuser.getUid(), classroomid, msg);
+                    sendMessage(fuser.getUid(), map.get("id"), msg);
                 }else{
                     Toast.makeText(ClassRoomMessageActivity.this, "Please send a non empty message", Toast.LENGTH_SHORT).show();
                 }
@@ -279,7 +296,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
     private void sendMessage(String sender, String receiver, String message){
 
         //String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(classroomid);//Gets the key of the chatroom from Firebase
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(classroomid).child("Messages");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(map.get("id")).child("Messages");
 
 
         Calendar c = Calendar.getInstance();
@@ -289,7 +306,7 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         //Adds message info to database
 //        HashMap<String, Object> hashMap = new HashMap<>();
         messageMap.put("sender", sender);
-        messageMap.put("classroomID", classroomid); //The chatroom id will receive this message
+        messageMap.put("classroomID", map.get("id")); //The chatroom id will receive this message
         messageMap.put("message", message);
         messageMap.put("messageType", "message");
         messageMap.put("Date and Time", formattedDate);

@@ -2,6 +2,7 @@ package com.firstapp.firebasechat.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -29,11 +31,19 @@ import java.util.List;
 public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<String> mRooms;
+    private ArrayList<String> cmRooms;
+    private ArrayList<Classrooms> mRooms;
     private boolean isChat;
 
+
     //Constructor
-    public ClassRoomAdapter(Context context, ArrayList<String> mRooms, boolean isChat){
+    /*public ClassRoomAdapter(Context context, ArrayList<String> mRooms, boolean isChat){
+        this.context = context;
+        this.mRooms = mRooms;
+        this.isChat = isChat;
+    }*/
+
+    public ClassRoomAdapter(Context context, ArrayList<Classrooms> mRooms, boolean isChat){
         this.context = context;
         this.mRooms = mRooms;
         this.isChat = isChat;
@@ -53,7 +63,8 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ClassRoomAdapter.ViewHolder holder, int position) {
 
-        holder.classroomName.setText(mRooms.get(position));
+        holder.classroomName.setText(mRooms.get(position).getRoomName());
+
 
 
 //        //For profile picture of classroom
@@ -72,7 +83,22 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
             public void onClick(View v) {
                 System.out.println("classroom: " + holder.classroomName.getText());
                 Intent i = new Intent(context, ClassRoomMessageActivity.class);
-                i.putExtra("classroomName", holder.classroomName.getText());
+                //i.putExtra("classroomName", holder.classroomName.getText());
+               // i.putExtra("classroomName", mRooms);
+               // i.putExtra("classroomName", mRooms);
+               // cmRooms.add(mRooms.get(position).getRoomName());
+              //  cmRooms.add(mRooms.get(position).getId());
+                //i.putStringArrayListExtra("classroomName", cmRooms);
+                //i.putParcelableArrayListExtra("classroomName", mRooms);
+
+                HashMap<String, String> hashMap = new HashMap<String, String>();
+                hashMap.put("roomName", mRooms.get(position).getRoomName());
+                hashMap.put("id", mRooms.get(position).getId());
+                //hashMap.put(mRooms.get(position).getRoomName(), "classRoomName");
+
+
+
+                i.putExtra("classroomName", hashMap);
                 context.startActivity(i);
 
             }

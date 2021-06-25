@@ -35,7 +35,7 @@ public class ClassRoomsFragment extends Fragment {
     //private List<Users> mUsers; //List of total existing users on Firebase
 
     private List<Classrooms> classroomsList; //List of recent classrooms with users
-    private ArrayList<String> classrooms;
+    private ArrayList<Classrooms> classrooms;
     private List<String> myUsers;
 
     FirebaseUser fuser;
@@ -48,7 +48,7 @@ public class ClassRoomsFragment extends Fragment {
 
     public ClassRoomsFragment() {
         // Required empty public constructor
-        classrooms = new ArrayList<>();
+        classrooms = new ArrayList<Classrooms>();
         myUsers = new ArrayList<>();
 
     }
@@ -101,12 +101,15 @@ public class ClassRoomsFragment extends Fragment {
 
                     roomRef = FirebaseDatabase.getInstance().getReference("ChatRooms").child(snapshot1.getKey().toString())
                             .child("Room Name");
+
+                    String id = snapshot1.getKey().toString();
                     roomRef.addValueEventListener(new ValueEventListener() {
 
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                classrooms.add(snapshot1.getKey().toString());
+                                classrooms.add(new Classrooms(snapshot1.getKey().toString(),id));
+                                //classrooms.add(snapshot1.getKey().toString());
                             }
                             classRoomAdapter = new ClassRoomAdapter(getContext(), classrooms, true);
                             recyclerView.setAdapter(classRoomAdapter);

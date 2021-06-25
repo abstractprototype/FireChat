@@ -7,6 +7,7 @@ public class Users {
     private String imageURL;
     private String status;
 
+
     private Boolean selected = false;
 
     //Constructors;
@@ -14,12 +15,16 @@ public class Users {
 
     }
 
+
+
     public Users(String id, String username, String imageURL, String status){
         this.id = id;
         this.username = username;
         this.imageURL = imageURL;
         this.status = status;
     }
+
+
 
     // Getters and Setters
     public String getId() {
