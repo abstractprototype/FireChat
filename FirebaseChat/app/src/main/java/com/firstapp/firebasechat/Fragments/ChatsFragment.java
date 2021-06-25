@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.firstapp.firebasechat.Adapter.UserAdapter;
 import com.firstapp.firebasechat.Model.Chatlist;
@@ -25,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 //This class is for displaying recent chats with users
@@ -54,7 +52,7 @@ public class ChatsFragment extends Fragment {
                 container,
                 false);
 
-        recyclerView = view.findViewById(R.id.recycler_view2);
+        recyclerView = view.findViewById(R.id.recyclerview2);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -119,8 +117,6 @@ public class ChatsFragment extends Fragment {
 
             }
         });
-
-
 
     }
 

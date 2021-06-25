@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.firstapp.firebasechat.MessageActivity;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.List;
 
@@ -44,9 +43,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         View view = LayoutInflater.from(context).inflate(R.layout.user_item,
                 parent,
                  false);
-//        View view2 = LayoutInflater.from(context).inflate(R.layout.user_itemnocheckbox,
-//                parent,
-//                false);
+
         return new UserAdapter.ViewHolder(view);
     }
 
@@ -89,10 +86,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
             @Override
             public void onClick(View v) {
+
                 Intent i = new Intent(context, MessageActivity.class);
                 i.putExtra("userid", users.getId());
                 context.startActivity(i);
-
 
             }
         });
@@ -115,8 +112,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            username = itemView.findViewById(R.id.usernameItem);
-            imageView = itemView.findViewById(R.id.imageView);
+            username = itemView.findViewById(R.id.classroomName);
+            imageView = itemView.findViewById(R.id.classroomImage);
             mAdd = itemView.findViewById(R.id.addUser);
             imageViewON = itemView.findViewById(R.id.statusimageON);
             imageViewOFF = itemView.findViewById(R.id.statusimageOFF);
