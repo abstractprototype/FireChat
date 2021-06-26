@@ -198,6 +198,8 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         progressDialog.setMessage("Uploading");
         progressDialog.show();
 
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(map.get("id")).child("Messages");
+
         if(imageUri != null) {
             final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
                     + "." + getFileExtension(imageUri));
@@ -230,12 +232,14 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
 
                         //HashMap<String, Object> map = new HashMap<>();
                         messageMap.put("sender", fuser.getUid());
+                        //messageMap.put("classroomID", map.get("id")); //The chatroom id will receive this message
                         messageMap.put("message", mUri);
                         messageMap.put("messageType", "image");
                         messageMap.put("Date and Time", formattedDate);
-                        //reference.updateChildren(messageMap);
-                        classRoomReference.child("ChatRooms").child("Messages").push().setValue(messageMap);
-                        //sendMessage(fuser.getUid(), userid, mUri);
+                        //classRoomReference.updateChildren(messageMap);
+                        //classRoomReference.child("ChatRooms").child("Messages").push().setValue(messageMap);
+                        reference.push().setValue(messageMap);
+                        //sendMessage(fuser.getUid(), classroomid, mUri);
 
                         messageAdapter = new MessageAdapter(ClassRoomMessageActivity.this, mChat, imageUri);
 
