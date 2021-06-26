@@ -179,9 +179,17 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
             }
         });
 
-
+        classRoomTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ClassRoomMessageActivity.this, ClassRoomInfo.class);
+                intent.putExtra("classroom id", map.get("id"));
+                startActivity(intent);
+            }
+        });
 
     }
+
 
     private String getFileExtension(Uri uri){
 
