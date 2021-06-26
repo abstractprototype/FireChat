@@ -115,9 +115,9 @@ public class UserFragment extends Fragment {
         //DatabaseReference classroomPassword = FirebaseDatabase.getInstance().getReference().child("ChatRooms");
 
         DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("MyUsers");
-
-        FirebaseUser firebaseUser = auth.getCurrentUser();
-        String userid = firebaseUser.getUid();
+        DatabaseReference chatRoomInfoDb = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(roomID);//Creates a folder "Chat Rooms", saves the Chat Room ID.
+//        FirebaseUser firebaseUser = auth.getCurrentUser();
+      //  String userid = firebaseUser.getUid();
 
         newChatRoom.clear();
 
@@ -138,22 +138,16 @@ public class UserFragment extends Fragment {
 
                             System.out.println("Getting room ID");
 
-                            newChatRoom.put("users/" + FirebaseAuth.getInstance().getCurrentUser(), true);
+                            newChatRoom.put("users/" + FirebaseAuth.getInstance().getUid(), true);//Puts all user IDs inside chatroom folder
+                            //newChatRoom.put("users/" + FirebaseAuth.getInstance().getCurrentUser(), true);
 
-                            userDb.child(userid).child("ChatRooms").child(roomID).setValue(true);
+                            chatRoomInfoDb.updateChildren(newChatRoom);
 
-                            //classroomID.child(roomID).child("users").push(userid);
+                            newChatRoom.clear();
+                            //newChatRoom.put("ChatRooms/" + FirebaseAuth.getInstance().getUid(), true);
 
-//                            Intent i = new Intent(getContext(), ClassRoomMessageActivity.class);
-//                            startActivity(i);
-
-//                            classroomPassword.child(roomID).child("Room Password");
-//                            classroomPassword.getKey().toString();
-//                            System.out.println("child of room password" + snapshot1);
-//                            if(roomPassword.equals(snapshot1.getKey().toString())){
-//                                Intent i = new Intent(context, ClassRoomMessageActivity.class);
-//
-//                                System.out.println("girlboss");
+                            //userDb.updateChildren(newChatRoom);
+                            userDb.child(FirebaseAuth.getInstance().getUid()).child("ChatRooms").child(roomID).setValue(true);
 //                            }
                         }
                     }
