@@ -81,14 +81,14 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
     private static String cRoomID;
     private HashMap<String, String> map;
 
-
+    public static List<String> userNames;
     ValueEventListener seenListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_classroom_message);
-
+        userNames = new ArrayList<>();;
         intent = getIntent();
 
         map = (HashMap<String, String>) intent.getSerializableExtra("classroomName");
@@ -182,14 +182,76 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         classRoomTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ClassRoomMessageActivity.this, ClassRoomInfo.class);
-                intent.putExtra("classroom id", map.get("id"));
-                startActivity(intent);
+
+                classRoomUserNames();
+
             }
         });
 
     }
 
+    DatabaseReference reference;
+    HashMap<String, String> information1 = new HashMap<>();
+    private void classRoomUserNames(){
+
+        reference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(map.get("id")).child("users");
+
+        HashMap<Integer, String> information = new HashMap<>();
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mChat.clear();
+                Intent intent = new Intent(ClassRoomMessageActivity.this, ClassRoomInfo.class);
+
+                int counter = 0;
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String chat = snapshot.getKey().toString();
+                    System.out.println("ggg: " + chat);
+                    intent.putExtra("counter", counter + "");
+                    intent.putExtra("classroom id" + counter++, chat);
+
+
+                }
+
+
+
+                //intent.putExtra("classroom id", information1);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        System.out.println("size: " + userNames.size());
+
+        //for(int i = 0; i < userNames.size(); i++) {
+           // reference = FirebaseDatabase.getInstance().getReference().child("MyUsers").child(userNames.get(0));
+
+
+        /*reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Users chat = snapshot.getValue(Users.class);
+
+                    System.out.println("no time: " + chat.getUsername());
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });*/
+
+
+    }
 
     private String getFileExtension(Uri uri){
 
