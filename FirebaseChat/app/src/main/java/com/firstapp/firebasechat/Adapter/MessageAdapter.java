@@ -65,23 +65,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.messageType = "image";
     }
 
+    public MessageAdapter(Context context, List<Chat> mChat){ //Sending Image only
+        this.mChat = mChat;
+        this.context = context;
+        this.image = image;
+        this.messageType = "text";
+        this.imgURL ="default";
+    }
+
+
     @NonNull
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull  ViewGroup parent, int viewType) {
 
         //Displays the chat_item_right layout on right hand side
         if (viewType == MSG_TYPE_LEFT){
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left,
-                parent,
-                false);
-        return new MessageAdapter.ViewHolder(view);
-
-    }else {
-            View view = LayoutInflater.from(context).inflate(R.layout.chat_item_right,
+            View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left,
                     parent,
                     false);
             return new MessageAdapter.ViewHolder(view);
-        }
+
+        }else {
+                View view = LayoutInflater.from(context).inflate(R.layout.chat_item_right,
+                        parent,
+                        false);
+                return new MessageAdapter.ViewHolder(view);
+            }
     }
 
     private StorageReference ImagesRef;
@@ -92,7 +101,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Chat chat = mChat.get(position);
 
 
-        //System.out.println("message type: " + messageType);
+        System.out.println("message type: " + messageType);
        // System.out.println("")
       /* if(chat.getMessage().charAt(0) == 'h' && chat.getMessage().charAt(1) == 't'
                 && chat.getMessage().charAt(2) == 't' && chat.getMessage().charAt(3) == 'p'
@@ -134,9 +143,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
        //final StorageReference filePath = ImagesRef.child(image.getLastPathSegment() + ".jpg");
        // Task<Uri> image = filePath.getDownloadUrl();
        // filePath.getFile(Uri.parse(chat.getMessage()));
-
-
-
 
 
         try{

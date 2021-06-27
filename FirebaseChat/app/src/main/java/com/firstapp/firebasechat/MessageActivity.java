@@ -63,6 +63,7 @@ import java.util.Map;
 
 import static java.security.AccessController.getContext;
 
+//This class connects to activity_message.xml only used for direct messaging
 public class MessageActivity extends AppCompatActivity {
 
     TextView username;
@@ -101,6 +102,7 @@ public class MessageActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mMediaLayoutManager;
     RecyclerView.Adapter mMediaAdapter;
     String userid;
+    //ArrayList<String> classroomid;
 
     ValueEventListener seenListener;
 
@@ -127,9 +129,11 @@ public class MessageActivity extends AppCompatActivity {
 
         intent = getIntent();
         userid = intent.getStringExtra("userid");
+        //classroomid = intent.getStringArrayListExtra("classroomid");
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid);
+        reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid); //This sets up the database reference to directly message any user on Firebase
+        //reference = FirebaseDatabase.getInstance().getReference("ChatRooms");
 
         //Initialize Loading Bar
         loadingBar = new ProgressDialog(this);
@@ -303,6 +307,8 @@ public class MessageActivity extends AppCompatActivity {
 
                 for(DataSnapshot snapshot1 : snapshot.getChildren()){
                     Chat chat = snapshot1.getValue(Chat.class);
+                    if(chat.getReceiver() == null)
+                        break;
 
                     if(chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userid) ){
                         HashMap<String, Object> hashMap = new HashMap<>();
@@ -325,6 +331,7 @@ public class MessageActivity extends AppCompatActivity {
     ArrayList<String> mediaIdList = new ArrayList<>();
 
     private void sendMessage(String sender, String receiver, String message){
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         Calendar c = Calendar.getInstance();
@@ -334,13 +341,16 @@ public class MessageActivity extends AppCompatActivity {
         //Adds message info to database
 //        HashMap<String, Object> hashMap = new HashMap<>();
         messageMap.put("sender", sender);
-        messageMap.put("receiver", receiver);
+        messageMap.put("receiver", receiver); //The chatroom will receive this message
         messageMap.put("message", message);
         messageMap.put("isseen",false);
         messageMap.put("messageType", "message");
         messageMap.put("Date and Time", formattedDate);
-        reference.child("Chats").push().setValue(messageMap);
+        reference.child("Chats").push().setValue(messageMap); //saves each message info into folder Chats
+        //reference.child("ChatRooms").child("Messages").push().setValue((messageMap)); //saves each message into ChatRooms/Messages
 
+        //Allows user to select multiple media pictures to send at once
+        //Puts the media files in an arraylist
 //        if(!mediaUriList.isEmpty()){
 //            for(String mediaUri : mediaUriList){
 //                String mediaId = reference.child("media").push().getKey();
@@ -371,13 +381,22 @@ public class MessageActivity extends AppCompatActivity {
 //                updateDatabaseWithNewMessage(reference, hashMap);
 //            }
 //        }
+// private void updateDatabaseWithNewMessage(DatabaseReference databaseReference, HashMap hashMap ){
+//        databaseReference.updateChildren(hashMap);
+//        mediaUriList.clear();
+//        mediaIdList.clear();
+//        mMediaAdapter.notifyDataSetChanged();
+//
+//    }
 
 
         //After chatting with user, adds User to chat fragment: Recent chats with contacts
+
+        //Don't need this code because we have chatrooms now instead of individual messaging(save for future use)
         final DatabaseReference chatRef = FirebaseDatabase.getInstance()
                 .getReference("ChatList")
                 .child(fuser.getUid())
-                .child(userid);
+                .child(userid); //Creating a unique chat with receiver and sender in Chatlist folder. Includes the user ID
 
         chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -395,18 +414,12 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-//    private void updateDatabaseWithNewMessage(DatabaseReference databaseReference, HashMap hashMap ){
-//        databaseReference.updateChildren(hashMap);
-//        mediaUriList.clear();
-//        mediaIdList.clear();
-//        mMediaAdapter.notifyDataSetChanged();
-//
-//    }
-
     private void readMessages(String myid, String userid, String imageURL){
         mChat = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference("Chats");
+        //reference = FirebaseDatabase.getInstance.getReference("ChatRooms").child("Messages"); //Retrieves all messages from ChatRooms/Messages
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -414,13 +427,17 @@ public class MessageActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
 
-                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
-                        chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                    try {
+                        if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
+                                chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
 
-                        mChat.add(chat);
+                            mChat.add(chat);
+                        }
+                        messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageURL);
+                        recyclerView.setAdapter(messageAdapter);
+                    }catch(Exception e){
+
                     }
-                    messageAdapter = new MessageAdapter(MessageActivity.this, mChat, imageURL);
-                    recyclerView.setAdapter(messageAdapter);
                 }
             }
 
@@ -431,8 +448,6 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
-
-
 
     //Checks online or offline status of a user
     private void CheckStatus(String status){

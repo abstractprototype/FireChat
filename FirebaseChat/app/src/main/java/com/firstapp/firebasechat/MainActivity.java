@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firstapp.firebasechat.Fragments.ChatsFragment;
+import com.firstapp.firebasechat.Fragments.ClassRoomsFragment;
 import com.firstapp.firebasechat.Fragments.ProfileFragment;
 import com.firstapp.firebasechat.Fragments.UserFragment;
 import com.firstapp.firebasechat.Model.Users;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        System.out.println("I am in main");
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         myRef = FirebaseDatabase.getInstance().getReference("MyUsers").child(firebaseUser
@@ -85,10 +88,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        //Adds the fragment to main activity.
-        viewPagerAdapter.addFragment(new ChatsFragment(),"Recent Chats");
+        //Adds the fragment to main activity. Displayed from Left to Right
+        viewPagerAdapter.addFragment(new ClassRoomsFragment(), "My Chat Rooms");
+        //viewPagerAdapter.addFragment(new ProfileFragment(), "My Profile");
         viewPagerAdapter.addFragment(new UserFragment(), "All Users");
-        viewPagerAdapter.addFragment(new ProfileFragment(), "My Profile");
+        viewPagerAdapter.addFragment(new ChatsFragment(),"Recent Chats");
 
         viewPager.setAdapter(viewPagerAdapter);
 
