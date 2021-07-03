@@ -17,6 +17,7 @@ import com.firstapp.firebasechat.R;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ public class RoomInfoAdapter extends RecyclerView.Adapter<RoomInfoAdapter.ViewHo
     private Context context;
     private String mUsers;
     private int counter;
+    private List<String> list_of_users;
 
     //Constructor
     public RoomInfoAdapter(Context context, String mUsers){
@@ -35,9 +37,23 @@ public class RoomInfoAdapter extends RecyclerView.Adapter<RoomInfoAdapter.ViewHo
         this.counter = 0;
 
 
-
+        System.out.println("users: " + mUsers);
     }
 
+    public RoomInfoAdapter(Context context, List<String> mUserNames){
+        this.context = context;
+        this.list_of_users = mUserNames;
+        this.counter = 0;
+
+
+
+
+        for(int i = 0; i < list_of_users.size(); i++)
+        System.out.println("list of users: " + list_of_users.get(i));
+
+
+
+    }
 
     @NonNull
     @Override
@@ -55,9 +71,10 @@ public class RoomInfoAdapter extends RecyclerView.Adapter<RoomInfoAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RoomInfoAdapter.ViewHolder holder, int position) {
         //Users users = mUsers.get(position);
+        String users = list_of_users.get(position);
 
-        System.out.println("users: " + mUsers);
-        holder.username_room.setText(mUsers);
+        System.out.println("WHy are you not running");
+        holder.show_message.setText(users);
         /*holder.username.setText(users.getUsername());
 
 
@@ -99,17 +116,19 @@ public class RoomInfoAdapter extends RecyclerView.Adapter<RoomInfoAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return 1;
+        return list_of_users.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView username_room;
+        TextView username_room, show_message;
+
         ImageView image_room;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            System.out.println("users: " + mUsers);
+
             username_room = itemView.findViewById(R.id.room_username);
+           // show_message = itemView.findViewById(R.id.show_message);
             //image_room = itemView.findViewById(R.id.room_classroomImage);
 
         }

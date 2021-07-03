@@ -44,6 +44,7 @@ public class ClassRoomInfo extends AppCompatActivity {
         setContentView(R.layout.classroom_information);
 
         cRoomID = findViewById(R.id.classRoomTextID);
+        recyclerView = findViewById(R.id.classroomUsersRecycler);
 
         intent = getIntent();
 
@@ -82,10 +83,12 @@ public class ClassRoomInfo extends AppCompatActivity {
                        //cRoomID.setText(snapshot.getValue().toString());
                        //usernames.add(snapshot.getValue().toString());
                        roomInfoAdapter = new RoomInfoAdapter(ClassRoomInfo.this, snapshot.getValue().toString());
-                       recyclerView = findViewById(R.id.classroomUsersRecycler);
+                       //recyclerView = findViewById(R.id.classroomUsersRecycler);
                        //recyclerView.setHasFixedSize(true);
                        //recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                       recyclerView.setAdapter(roomInfoAdapter);
+                       //recyclerView.setAdapter(roomInfoAdapter);
+
+
                        break;
                    }
 
