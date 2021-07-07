@@ -37,7 +37,7 @@
 
     <!-- RecyclerView to display old messages when you click on user -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+        android:id="@+id/ducks"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"

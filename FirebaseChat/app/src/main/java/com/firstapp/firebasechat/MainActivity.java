@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.firstapp.firebasechat.Fragments.ChatsFragment;
 import com.firstapp.firebasechat.Fragments.ClassRoomsFragment;
 import com.firstapp.firebasechat.Fragments.ProfileFragment;
+import com.firstapp.firebasechat.Fragments.TimelineFragment;
 import com.firstapp.firebasechat.Fragments.UserFragment;
 import com.firstapp.firebasechat.Model.Users;
 import com.google.android.material.navigation.NavigationView;
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //viewPagerAdapter.addFragment(new ProfileFragment(), "My Profile");
         viewPagerAdapter.addFragment(new UserFragment(), "All Users");
         viewPagerAdapter.addFragment(new ChatsFragment(),"Recent Chats");
+        viewPagerAdapter.addFragment(new TimelineFragment(),"Posts");
 
         viewPager.setAdapter(viewPagerAdapter);
 

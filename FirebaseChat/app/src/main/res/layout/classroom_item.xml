@@ -6,18 +6,18 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/classroomName"
+        android:id="@+id/posterName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="36dp"
         android:text="TextView"
         android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/classroomImage"
+        app:layout_constraintStart_toEndOf="@+id/posterProfilePic"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/classroomImage"
+        android:id="@+id/posterProfilePic"
         android:layout_width="wrap_content"
         android:layout_height="@android:dimen/notification_large_icon_height"
         android:layout_marginStart="16dp"

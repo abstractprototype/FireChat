@@ -2,28 +2,21 @@ package com.firstapp.firebasechat.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.firstapp.firebasechat.ClassRoomMessageActivity;
-import com.firstapp.firebasechat.MessageActivity;
 import com.firstapp.firebasechat.Model.Classrooms;
-import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 //Gets all the user information from firebase
@@ -65,8 +58,6 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
 
         holder.classroomName.setText(mRooms.get(position).getRoomName());
 
-
-
 //        //For profile picture of classroom
 //        if(classroom.getImageURL().equals("default")){
 //            holder.classroomImage.setImageResource(R.mipmap.ic_launcher);
@@ -83,20 +74,10 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
             public void onClick(View v) {
                 System.out.println("classroom: " + holder.classroomName.getText());
                 Intent i = new Intent(context, ClassRoomMessageActivity.class);
-                //i.putExtra("classroomName", holder.classroomName.getText());
-               // i.putExtra("classroomName", mRooms);
-               // i.putExtra("classroomName", mRooms);
-               // cmRooms.add(mRooms.get(position).getRoomName());
-              //  cmRooms.add(mRooms.get(position).getId());
-                //i.putStringArrayListExtra("classroomName", cmRooms);
-                //i.putParcelableArrayListExtra("classroomName", mRooms);
 
                 HashMap<String, String> hashMap = new HashMap<String, String>();
                 hashMap.put("roomName", mRooms.get(position).getRoomName());
                 hashMap.put("id", mRooms.get(position).getId());
-                //hashMap.put(mRooms.get(position).getRoomName(), "classRoomName");
-
-
 
                 i.putExtra("classroomName", hashMap);
                 context.startActivity(i);
@@ -137,8 +118,8 @@ public class ClassRoomAdapter extends RecyclerView.Adapter<ClassRoomAdapter.View
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            classroomImage = itemView.findViewById(R.id.classroomImage);
-            classroomName = itemView.findViewById(R.id.classroomName);
+            classroomImage = itemView.findViewById(R.id.posterProfilePic);
+            classroomName = itemView.findViewById(R.id.posterName);
 
             /*show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);

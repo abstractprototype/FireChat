@@ -1,7 +1,6 @@
 package com.firstapp.firebasechat.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,19 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.firstapp.firebasechat.Adapter.UserAdapter;
-import com.firstapp.firebasechat.ClassRoomMessageActivity;
-import com.firstapp.firebasechat.Login_Activity;
-import com.firstapp.firebasechat.MainActivity;
-import com.firstapp.firebasechat.Model.Chat;
 import com.firstapp.firebasechat.Model.Users;
 import com.firstapp.firebasechat.R;
-import com.firstapp.firebasechat.RegisterActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +25,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,12 +49,11 @@ public class UserFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_user, container, false);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.ducks);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mUsers = new ArrayList<>();
-        //chatRoomID = new ArrayList<>();
 
         ReadUsers();
 
@@ -112,7 +100,6 @@ public class UserFragment extends Fragment {
     private void joinChatRoom(String roomID){
 
         DatabaseReference classroomID = FirebaseDatabase.getInstance().getReference().child("ChatRooms");
-        //DatabaseReference classroomPassword = FirebaseDatabase.getInstance().getReference().child("ChatRooms");
 
         DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("MyUsers");
         DatabaseReference chatRoomInfoDb = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(roomID);//Creates a folder "Chat Rooms", saves the Chat Room ID.
@@ -158,21 +145,6 @@ public class UserFragment extends Fragment {
 
                 }
             });
-//            auth.signInWithEmailAndPassword(email_text, pass_text)
-//                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<AuthResult> task) {
-//                            if(task.isSuccessful()){
-//                                Intent i = new Intent(Login_Activity.this, MainActivity.class);
-//                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                startActivity(i);
-//                                finish();
-//                            }
-//                            else{
-//                                Toast.makeText(Login_Activity.this, "Login Failed!", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
 
         }
     }

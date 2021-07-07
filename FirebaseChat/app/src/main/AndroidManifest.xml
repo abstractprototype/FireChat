@@ -18,6 +18,7 @@
         <activity android:name=".ClassRoomInfo"></activity>
         <activity android:name=".MessageActivity"></activity>
         <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".CreatePost" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".Login_Activity">
             <intent-filter>

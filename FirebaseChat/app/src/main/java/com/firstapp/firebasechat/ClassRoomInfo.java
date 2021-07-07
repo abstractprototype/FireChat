@@ -36,11 +36,9 @@ public class ClassRoomInfo extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
-    //my nub
-
-
     HashMap<String, String> id;
     protected void onCreate(Bundle savedInstanceState){
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.classroom_information);
 
@@ -61,8 +59,6 @@ public class ClassRoomInfo extends AppCompatActivity {
             System.out.println("id: " + intent.getStringExtra("classroom id" + i));
             getUsernames(intent.getStringExtra("classroom id" + i));
         }
-
-
 
         //cRoomID.setText("Classroom ID: " + id.get(6969));
 
@@ -88,8 +84,6 @@ public class ClassRoomInfo extends AppCompatActivity {
                        //recyclerView.setHasFixedSize(true);
                        //recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                        //recyclerView.setAdapter(roomInfoAdapter);
-
-
                        break;
                    }
 

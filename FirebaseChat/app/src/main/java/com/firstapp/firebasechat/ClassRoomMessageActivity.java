@@ -124,7 +124,6 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference("images");
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
-        //reference = FirebaseDatabase.getInstance().getReference("MyUsers").child(userid);
         classRoomReference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(map.get("id"));
 
         ArrayList<String> classrooms = new ArrayList<>();
@@ -137,8 +136,6 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
                 }
                 classRoomTitle.setText(map.get("roomName")); //Displays classroom title
                 System.out.println(dataSnapshot);
-
-
 
                 //Displays classroom image
                    /* if (classrooms.getClassImageURL() != null && classrooms.getClassImageURL().equals("default")) {
@@ -371,13 +368,11 @@ public class ClassRoomMessageActivity extends AppCompatActivity {
         //String key = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(classroomid);//Gets the key of the chatroom from Firebase
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(map.get("id")).child("Messages");
 
-
         Calendar c = Calendar.getInstance();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formattedDate = df.format(c.getTime());
         //Adds message info to database
-//        HashMap<String, Object> hashMap = new HashMap<>();
         messageMap.put("sender", sender);
         messageMap.put("classroomID", map.get("id")); //The chatroom id will receive this message
         messageMap.put("message", message);
